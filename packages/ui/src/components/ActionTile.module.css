@@ -1,0 +1,119 @@
+/*
+ * The tile is the app's primary control: the technician taps parts as they work
+ * and the invoice assembles itself. Everything here is tuned for that moment —
+ * a gloved thumb, a bright driveway, and no patience.
+ */
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  min-height: 116px;
+  min-width: var(--mf-tap-min);
+  padding: 14px 10px 12px;
+
+  background: var(--mf-surface);
+  border: 1.5px solid var(--mf-border);
+  border-radius: var(--mf-r-lg);
+  color: var(--mf-text-2);
+
+  cursor: pointer;
+  text-align: center;
+  appearance: none;
+  transition:
+    border-color var(--mf-dur) var(--mf-ease),
+    background-color var(--mf-dur) var(--mf-ease),
+    color var(--mf-dur) var(--mf-ease),
+    box-shadow var(--mf-dur) var(--mf-ease),
+    transform var(--mf-dur-fast) var(--mf-ease);
+}
+
+/* A one-pixel highlight along the top edge. Reads as a machined surface
+   catching light — the difference between "flat rectangle" and "object". */
+.tile::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0.06), transparent 42%);
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .tile:hover {
+    border-color: var(--mf-border-strong);
+    color: var(--mf-text);
+    box-shadow: var(--mf-shadow-md);
+    transform: translateY(-2px);
+  }
+}
+
+.tile:active {
+  transform: translateY(0) scale(0.975);
+}
+
+.tile[aria-pressed='true'] {
+  border-color: var(--mf-low);
+  background: var(--mf-low-soft);
+  color: var(--mf-text);
+  box-shadow: 0 0 0 3px var(--mf-low-ring);
+}
+
+.icon {
+  color: var(--mf-text-2);
+  transition: color var(--mf-dur) var(--mf-ease);
+}
+
+.tile[aria-pressed='true'] .icon,
+.tile:hover .icon {
+  color: var(--mf-low);
+}
+
+.label {
+  font-family: var(--mf-font-cond);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: 0.005em;
+  text-wrap: balance;
+}
+
+.meta {
+  font-family: var(--mf-font-mono);
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--mf-text-3);
+}
+
+/* Quantity badge. Shows only once the part is on the ticket, so an untouched
+   grid stays quiet and the chosen items pop. */
+.count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  display: grid;
+  place-items: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 7px;
+
+  background: var(--mf-low);
+  color: var(--mf-text-inverse);
+  border-radius: var(--mf-r-full);
+  box-shadow: var(--mf-shadow-sm);
+
+  font-family: var(--mf-font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.tile:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}

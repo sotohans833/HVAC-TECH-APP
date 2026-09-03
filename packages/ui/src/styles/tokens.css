@@ -1,0 +1,169 @@
+/*
+ * Manifold — design tokens
+ *
+ * The palette comes from the refrigeration manifold gauge set that every tech
+ * already owns: the low-side (suction) gauge is blue, the high-side (liquid)
+ * gauge is red, and the line set between them is copper. Those three colors
+ * are not decoration here — they encode meaning consistently across the app:
+ *
+ *   low    — refrigerant / cooling side, and the primary interactive accent
+ *   high   — heating, electrical-hot, and destructive actions
+ *   copper — line set, brazing, refrigerant handling
+ *
+ * Light theme is the default so the app is readable on a roof in direct sun.
+ * Dark theme is what the app boots into (see ThemeScript) because most service
+ * calls that need a phone screen happen in an attic, a closet, or after dark.
+ */
+
+:root {
+  /* ---- surfaces (light) ---- */
+  --mf-bg: #eef3f5;
+  --mf-surface: #ffffff;
+  --mf-surface-2: #e6edf0;
+  --mf-surface-3: #d8e3e8;
+  --mf-border: #c5d4db;
+  --mf-border-strong: #9db0ba;
+
+  /* ---- text (light) ---- */
+  --mf-text: #0b1519;
+  --mf-text-2: #3c525d;
+  --mf-text-3: #647c88;
+  --mf-text-inverse: #f2f8fa;
+
+  /* ---- accents (light) ---- */
+  --mf-low: #0a72ae;
+  --mf-low-hover: #095e91;
+  --mf-low-soft: #dceefa;
+  --mf-low-ring: #0a72ae40;
+
+  --mf-high: #c33a26;
+  --mf-high-soft: #fae3df;
+
+  --mf-copper: #a5622a;
+  --mf-copper-soft: #f7e9dc;
+
+  --mf-ok: #12855c;
+  --mf-ok-soft: #d9f2e7;
+
+  --mf-warn: #96690f;
+  --mf-warn-soft: #f9edd6;
+
+  /* ---- elevation ---- */
+  --mf-shadow-sm: 0 1px 2px rgb(11 21 25 / 0.07);
+  --mf-shadow-md: 0 2px 4px rgb(11 21 25 / 0.06), 0 10px 24px -14px rgb(11 21 25 / 0.35);
+  --mf-shadow-lg: 0 4px 8px rgb(11 21 25 / 0.07), 0 24px 48px -24px rgb(11 21 25 / 0.4);
+
+  /* ---- radii ---- */
+  --mf-r-sm: 6px;
+  --mf-r-md: 10px;
+  --mf-r-lg: 16px;
+  --mf-r-full: 999px;
+
+  /* ---- type ---- */
+  --mf-font-sans: 'Barlow', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mf-font-cond: 'Barlow Semi Condensed', 'Barlow', ui-sans-serif, system-ui, sans-serif;
+  --mf-font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* ---- motion ---- */
+  --mf-ease: cubic-bezier(0.2, 0.8, 0.3, 1);
+  --mf-dur-fast: 110ms;
+  --mf-dur: 180ms;
+
+  /*
+   * Field ergonomics. A technician taps this with gloves on, so 48px is the
+   * floor for anything interactive — well above the 24px WCAG 2.2 AA minimum.
+   */
+  --mf-tap-min: 48px;
+
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --mf-bg: #070e13;
+  --mf-surface: #0f1a21;
+  --mf-surface-2: #16242d;
+  --mf-surface-3: #1f3540;
+  --mf-border: #26404d;
+  --mf-border-strong: #3b5c6d;
+
+  --mf-text: #e8f1f5;
+  --mf-text-2: #a6bcc8;
+  --mf-text-3: #718b99;
+  --mf-text-inverse: #071016;
+
+  --mf-low: #38b6f5;
+  --mf-low-hover: #63c6f8;
+  --mf-low-soft: #0d2c3f;
+  --mf-low-ring: #38b6f555;
+
+  --mf-high: #ff6a4f;
+  --mf-high-soft: #3a1a13;
+
+  --mf-copper: #e09456;
+  --mf-copper-soft: #35220f;
+
+  --mf-ok: #2fd292;
+  --mf-ok-soft: #0a2f23;
+
+  --mf-warn: #f2b544;
+  --mf-warn-soft: #33260c;
+
+  --mf-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.5);
+  --mf-shadow-md: 0 2px 4px rgb(0 0 0 / 0.4), 0 10px 24px -14px rgb(0 0 0 / 0.8);
+  --mf-shadow-lg: 0 4px 8px rgb(0 0 0 / 0.45), 0 24px 48px -24px rgb(0 0 0 / 0.9);
+
+  color-scheme: dark;
+}
+
+/* Respect an explicit OS preference when the user has made no choice at all. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    color-scheme: light;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--mf-bg);
+  color: var(--mf-text);
+  font-family: var(--mf-font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--mf-low);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "app": {
+    "name": "Manifold",
+    "tagline": "Diagnóstico y facturación para técnicos de HVAC"
+  },
+  "builder": {
+    "eyebrow": "Orden de trabajo",
+    "heading": "Toca lo que reparaste",
+    "subheading": "La descripción de la factura se arma sola, en inglés profesional, mientras trabajas.",
+    "callType": "Tipo de servicio",
+    "unitLabel": "Equipo",
+    "unitPlaceholder": "Marca y modelo",
+    "parts": "Partes y trabajo",
+    "ticket": "Factura",
+    "empty": "Toca una parte para empezar. Lo que elijas aparece aquí redactado y listo para copiar.",
+    "copy": "Copiar descripción",
+    "copied": "Copiado",
+    "clear": "Limpiar",
+    "itemsOnTicket": "{count, plural, =0 {sin partes} one {# parte} other {# partes}}",
+    "quantity": "Cantidad de {part}",
+    "decrease": "Quitar uno",
+    "increase": "Agregar uno",
+    "remove": "Quitar {part} de la factura"
+  },
+  "callTypes": {
+    "no-cooling": "No enfría",
+    "no-heat": "No calienta",
+    "maintenance": "Mantenimiento",
+    "install": "Instalación"
+  },
+  "actions": {
+    "replaced": "Cambiado",
+    "repaired": "Reparado",
+    "cleaned": "Limpiado",
+    "tested": "Probado"
+  },
+  "theme": {
+    "toggle": "Cambiar tema",
+    "light": "Claro",
+    "dark": "Oscuro"
+  },
+  "locale": { "switch": "Idioma" },
+  "status": { "offline": "Sin conexión", "local": "Guardado en el equipo" }
+}

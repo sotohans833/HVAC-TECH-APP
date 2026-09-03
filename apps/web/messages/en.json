@@ -1,0 +1,40 @@
+{
+  "app": {
+    "name": "Manifold",
+    "tagline": "Diagnostics and invoicing for HVAC technicians"
+  },
+  "builder": {
+    "eyebrow": "Work order",
+    "heading": "Tap what you fixed",
+    "subheading": "The invoice description writes itself in professional English while you work.",
+    "callType": "Call type",
+    "unitLabel": "Equipment",
+    "unitPlaceholder": "Make and model",
+    "parts": "Parts and labor",
+    "ticket": "Invoice",
+    "empty": "Tap a part to start. Everything you pick shows up here, written and ready to copy.",
+    "copy": "Copy description",
+    "copied": "Copied",
+    "clear": "Clear",
+    "itemsOnTicket": "{count, plural, =0 {no parts} one {# part} other {# parts}}",
+    "quantity": "{part} quantity",
+    "decrease": "Remove one",
+    "increase": "Add one",
+    "remove": "Remove {part} from the invoice"
+  },
+  "callTypes": {
+    "no-cooling": "No cooling",
+    "no-heat": "No heat",
+    "maintenance": "Maintenance",
+    "install": "Installation"
+  },
+  "actions": {
+    "replaced": "Replaced",
+    "repaired": "Repaired",
+    "cleaned": "Cleaned",
+    "tested": "Tested"
+  },
+  "theme": { "toggle": "Toggle theme", "light": "Light", "dark": "Dark" },
+  "locale": { "switch": "Language" },
+  "status": { "offline": "Offline", "local": "Saved on device" }
+}

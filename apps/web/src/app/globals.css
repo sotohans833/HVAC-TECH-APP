@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import '@manifold/ui/styles/tokens.css';
+
+.app-shell {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px clamp(16px, 4vw, 32px);
+  background: color-mix(in srgb, var(--mf-bg) 88%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--mf-border);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: auto;
+}
+
+/* A pair of gauge dots — low side then high side. The whole identity in 20px. */
+.brand-mark {
+  display: flex;
+  gap: 4px;
+  flex: none;
+}
+.brand-mark span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+.brand-mark span:first-child {
+  background: var(--mf-low);
+}
+.brand-mark span:last-child {
+  background: var(--mf-high);
+}
+
+.brand-name {
+  font-family: var(--mf-font-cond);
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.app-main {
+  flex: 1;
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: clamp(20px, 4vw, 36px) clamp(16px, 4vw, 32px) 64px;
+}
+
+.icon-button {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--mf-border);
+  border-radius: var(--mf-r-md);
+  background: var(--mf-surface);
+  color: var(--mf-text-2);
+  cursor: pointer;
+  transition:
+    background-color var(--mf-dur) var(--mf-ease),
+    color var(--mf-dur) var(--mf-ease),
+    border-color var(--mf-dur) var(--mf-ease);
+}
+@media (hover: hover) {
+  .icon-button:hover {
+    background: var(--mf-surface-2);
+    border-color: var(--mf-border-strong);
+    color: var(--mf-text);
+  }
+}

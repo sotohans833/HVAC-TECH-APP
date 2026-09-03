@@ -1,0 +1,46 @@
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1.5px solid var(--mf-border);
+  border-radius: var(--mf-r-md);
+  background: var(--mf-surface);
+  overflow: hidden;
+}
+
+.step {
+  display: grid;
+  place-items: center;
+  width: var(--mf-tap-min);
+  height: var(--mf-tap-min);
+  background: transparent;
+  border: 0;
+  color: var(--mf-text-2);
+  cursor: pointer;
+  transition:
+    background-color var(--mf-dur) var(--mf-ease),
+    color var(--mf-dur) var(--mf-ease);
+}
+@media (hover: hover) {
+  .step:hover:not(:disabled) {
+    background: var(--mf-surface-2);
+    color: var(--mf-low);
+  }
+}
+.step:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.value {
+  min-width: 46px;
+  text-align: center;
+  font-family: var(--mf-font-mono);
+  font-size: 1rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--mf-text);
+  border-inline: 1.5px solid var(--mf-border);
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+}

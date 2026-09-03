@@ -1,0 +1,190 @@
+.layout {
+  display: grid;
+  gap: clamp(18px, 2.5vw, 28px);
+  align-items: start;
+}
+
+/* The ticket panel rides alongside the grid on a laptop and drops below it on a
+   phone, where the technician is scrolling with one thumb. */
+@media (min-width: 940px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) minmax(340px, 400px);
+  }
+  .ticket {
+    position: sticky;
+    top: 84px;
+  }
+}
+
+.intro {
+  margin-bottom: clamp(18px, 3vw, 26px);
+}
+
+.eyebrow {
+  font-family: var(--mf-font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--mf-low);
+  margin: 0 0 6px;
+}
+
+.heading {
+  font-family: var(--mf-font-cond);
+  font-size: clamp(1.75rem, 4vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  margin: 0 0 8px;
+  text-wrap: balance;
+}
+
+.subheading {
+  margin: 0;
+  max-width: 52ch;
+  color: var(--mf-text-2);
+  font-size: 1.0125rem;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 20px;
+  align-items: flex-end;
+  margin: 22px 0 26px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fieldLabel {
+  font-family: var(--mf-font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--mf-text-3);
+}
+
+.input {
+  min-height: 44px;
+  min-width: 220px;
+  padding: 0 13px;
+  background: var(--mf-surface);
+  border: 1.5px solid var(--mf-border);
+  border-radius: var(--mf-r-md);
+  color: var(--mf-text);
+  font-family: var(--mf-font-mono);
+  font-size: 0.9375rem;
+  transition: border-color var(--mf-dur) var(--mf-ease);
+}
+.input::placeholder {
+  color: var(--mf-text-3);
+}
+.input:focus {
+  border-color: var(--mf-low);
+}
+
+.category {
+  margin-bottom: 26px;
+}
+
+.categoryName {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 12px;
+  font-family: var(--mf-font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--mf-text-3);
+}
+/* Hairline that runs out from the label to the edge — a spec-sheet rule. */
+.categoryName::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--mf-border);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+  gap: 12px;
+}
+
+.empty {
+  color: var(--mf-text-3);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 40ch;
+}
+
+.lines {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--mf-border);
+}
+
+.line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border-top: 1px solid var(--mf-border);
+}
+
+.lineIcon {
+  color: var(--mf-low);
+  flex: none;
+}
+
+.lineText {
+  flex: 1;
+  min-width: 0;
+}
+
+.lineName {
+  display: block;
+  font-family: var(--mf-font-cond);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  line-height: 1.25;
+}
+
+.lineAction {
+  font-family: var(--mf-font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mf-text-3);
+}
+
+.preview {
+  padding: 18px 20px;
+}
+
+/* The generated description. Monospaced on purpose — it reads as machine output
+   the technician is about to paste somewhere, not as editable prose. */
+.previewText {
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: var(--mf-font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.72;
+  color: var(--mf-text-2);
+}
+
+.previewActions {
+  display: flex;
+  gap: 10px;
+  padding: 0 20px 18px;
+}

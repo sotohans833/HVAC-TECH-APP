@@ -1,0 +1,44 @@
+.panel {
+  background: var(--mf-surface);
+  border: 1px solid var(--mf-border);
+  border-radius: var(--mf-r-lg);
+  box-shadow: var(--mf-shadow-sm);
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid var(--mf-border);
+  background: var(--mf-surface-2);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--mf-font-cond);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: 0.005em;
+}
+
+/* Small uppercase mono label — the nameplate stamped on every piece of
+   equipment these techs open. Used for section eyebrows and field labels. */
+.eyebrow {
+  font-family: var(--mf-font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--mf-text-3);
+}
+
+.body {
+  padding: 18px 20px;
+}
+
+.flush {
+  padding: 0;
+}

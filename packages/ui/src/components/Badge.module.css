@@ -1,0 +1,48 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: var(--mf-r-full);
+  font-family: var(--mf-font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.neutral {
+  background: var(--mf-surface-3);
+  color: var(--mf-text-2);
+}
+.low {
+  background: var(--mf-low-soft);
+  color: var(--mf-low);
+}
+.high {
+  background: var(--mf-high-soft);
+  color: var(--mf-high);
+}
+.copper {
+  background: var(--mf-copper-soft);
+  color: var(--mf-copper);
+}
+.ok {
+  background: var(--mf-ok-soft);
+  color: var(--mf-ok);
+}
+.warn {
+  background: var(--mf-warn-soft);
+  color: var(--mf-warn);
+}
+
+/* Status is never carried by color alone — a dot shape backs it up, because
+   red/green color blindness is common and this gets read in bad light. */
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
