@@ -133,8 +133,8 @@ describe('diagnostic call with no fault found', () => {
   });
 });
 
-describe('explaining why the part failed', () => {
-  it('reports the finding and the reason behind it', () => {
+describe('reporting what was found', () => {
+  it('states the finding without explaining the failure', () => {
     const text = composeInvoiceDescription({
       callType: 'no-cooling',
       lines: [
@@ -144,28 +144,15 @@ describe('explaining why the part failed', () => {
 
     expect(text).toContain('FINDINGS');
     expect(text).toContain('Found the contactor with severely pitted and burned contacts.');
-    expect(text).toContain('WHY THIS HAPPENED');
-    expect(text).toContain('over thousands of cycles that arcing pits and burns');
+    expect(text).toContain('Replaced 1 condenser contactor.');
   });
 
-  it('reassures the customer that a wear part is not a sign of bad equipment', () => {
-    const text = composeInvoiceDescription({
-      callType: 'no-cooling',
-      lines: [
-        { itemId: 'contactor', quantity: 1, action: 'replaced', causeId: 'burned-contacts' },
-      ],
-    });
-    expect(text).toContain('does not reflect the quality or age of the system');
-  });
-
-  // The case that started all of this: a fourteen-month-old unit whose
-  // compressor failed because the customer declined maintenance and the
-  // condenser coil was completely plugged.
-  it('connects an early compressor failure to the skipped maintenance that caused it', () => {
+  // Why a part failed is a conversation, not a bill. The catalog still carries
+  // the explanations for a future customer-facing view; the invoice does not.
+  it('keeps the customer explanations off the invoice entirely', () => {
     const text = composeInvoiceDescription({
       callType: 'no-cooling',
       unit: 'Goodman GSX140361',
-      maintenanceScope: 'cooling',
       lines: [
         {
           itemId: 'compressor',
@@ -183,24 +170,35 @@ describe('explaining why the part failed', () => {
       ],
     });
 
-    expect(text).toContain('severely restricted condenser coil');
-    expect(text).toContain('most common cause of early compressor failure');
-    expect(text).toContain('rather than a defect in the unit');
-    expect(text).toContain('preventable with routine maintenance');
-    // The drier is standard practice, and the invoice should say so rather than
-    // leaving the customer to wonder why they were billed for an extra part.
-    expect(text).toContain('require a new drier any time the sealed system is opened');
+    expect(text).not.toContain('WHY THIS HAPPENED');
+    expect(text).not.toContain('preventable with routine maintenance');
+    expect(text).not.toContain('rather than a defect in the unit');
+    expect(text).not.toContain('require a new drier any time');
   });
 
-  it('does not nag about maintenance when nothing found was preventable', () => {
+  it('lists several findings instead of running them into one sentence', () => {
     const text = composeInvoiceDescription({
       callType: 'no-cooling',
-      lines: [{ itemId: 'transformer', quantity: 1, action: 'replaced', causeId: 'surge' }],
+      lines: [
+        {
+          itemId: 'compressor',
+          quantity: 1,
+          action: 'replaced',
+          causeId: 'overheated-restriction',
+        },
+        {
+          itemId: 'condenser-coil',
+          quantity: 1,
+          action: 'cleaned',
+          causeId: 'restricted-dirt',
+        },
+      ],
     });
-    expect(text).not.toContain('preventable with routine maintenance');
+    expect(text).toContain('• A failed compressor operating against');
+    expect(text).toContain('• A condenser coil heavily restricted with dirt and debris');
   });
 
-  it('says nothing about causes when the technician did not pick one', () => {
+  it('says nothing about findings when the technician did not pick a cause', () => {
     const text = composeInvoiceDescription({
       callType: 'no-cooling',
       lines: [{ itemId: 'contactor', quantity: 1, action: 'replaced' }],
@@ -209,9 +207,9 @@ describe('explaining why the part failed', () => {
     expect(text).toContain('Replaced 1 condenser contactor.');
   });
 
-  it('never repeats the same explanation twice', () => {
+  it('never repeats the same finding twice', () => {
     const text = composeInvoiceDescription({
-      callType: 'no-cooling',
+      callType: 'maintenance',
       lines: [
         {
           itemId: 'condenser-coil',
@@ -219,10 +217,15 @@ describe('explaining why the part failed', () => {
           action: 'cleaned',
           causeId: 'restricted-dirt',
         },
-        { itemId: 'evaporator-coil', quantity: 1, action: 'cleaned', causeId: 'dirty' },
+        {
+          itemId: 'condenser-fan-motor',
+          quantity: 1,
+          action: 'replaced',
+          causeId: 'restricted-airflow',
+        },
       ],
     });
-    const occurrences = text.split('preventable with routine maintenance').length - 1;
+    const occurrences = text.split('heavily restricted with dirt and debris').length - 1;
     expect(occurrences).toBe(1);
   });
 });

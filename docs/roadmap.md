@@ -25,11 +25,16 @@ Phase status as of 2026-09-03.
 
 ## Phase 1 — in progress
 
-Done: bilingual catalog of 22 parts with failure causes and customer-facing
-explanations, deterministic composer with 22 unit tests, preventative
+Done: bilingual catalog of 22 parts with failure causes, deterministic composer
+with 21 unit tests, preventative
 maintenance and diagnostic procedure lists, tile grid, ticket panel with
 per-line action and cause selection, quantity steppers, copy to clipboard.
 
 Next: measured readings on the invoice (superheat, subcooling, temperature
 split, capacitor microfarads, amp draws), IndexedDB persistence, a shareable
 invoice view, and photo attachments.
+
+Deferred: a customer-facing explainer view built on the `explanation` and
+`serviceNote` content already in the catalog. Those explanations were on the
+invoice and were pulled back off it — see ADR 0005 — because they belong in a
+conversation with the customers who ask, not on every bill.

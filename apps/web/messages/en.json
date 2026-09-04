@@ -27,7 +27,7 @@
     "actionFor": "What was done to the {part}",
     "causeFor": "Why the {part} was replaced",
     "causePlaceholder": "Why? — optional",
-    "causeHint": "Pick the cause and the invoice explains to the customer why it failed."
+    "causeHint": "Pick the cause and it appears in the invoice findings."
   },
   "callTypes": {
     "no-cooling": "No cooling",
@@ -48,7 +48,16 @@
     "performed": "Performed",
     "tested": "Tested"
   },
-  "theme": { "toggle": "Toggle theme", "light": "Light", "dark": "Dark" },
-  "locale": { "switch": "Language" },
-  "status": { "offline": "Offline", "local": "Saved on device" }
+  "theme": {
+    "toggle": "Toggle theme",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "locale": {
+    "switch": "Language"
+  },
+  "status": {
+    "offline": "Offline",
+    "local": "Saved on device"
+  }
 }

@@ -13,10 +13,11 @@ import { DIAGNOSTIC_CHECKS, maintenanceTasks, type MaintenanceScope } from './pr
  * this function already produced; it can never add, drop, or alter a line item.
  * See docs/adr/0002-deterministic-invoice.md.
  *
- * The description is written in sections because it has two readers who want
- * different things: the office needs to see what was done, and the homeowner
- * wants to know why it broke and whether it says anything about their equipment.
- * See docs/adr/0004-explaining-the-why.md.
+ * The description states what was found and what was done. It deliberately does
+ * not explain *why* a part failed: that conversation belongs face to face with
+ * the customers who ask for it, and on a bill it buried the line items. The
+ * catalog still carries those explanations for a future customer-facing view.
+ * See docs/adr/0005-why-lives-outside-the-invoice.md.
  */
 
 export type CallType = 'no-cooling' | 'no-heat' | 'maintenance' | 'install';
@@ -80,7 +81,6 @@ const HEADING = {
   tasks: 'INSPECTION AND SERVICE PERFORMED',
   findings: 'FINDINGS',
   work: 'WORK PERFORMED',
-  why: 'WHY THIS HAPPENED',
   status: 'SYSTEM STATUS AT DEPARTURE',
 } as const;
 
@@ -89,9 +89,6 @@ const NO_FAULT_FOUND =
 
 const ALL_WITHIN_SPEC =
   'All readings were within manufacturer specification at the time of this visit and no repairs were required. All safety controls were confirmed operational before departure.';
-
-const PREVENTABLE_NOTE =
-  'Several of the conditions found on this visit are preventable with routine maintenance. A seasonal maintenance visit keeps the coils clean, the condensate drain clear, the filter current and the electrical connections tight, which is what protects the compressor and the motors from the operating conditions that shorten their service life.';
 
 /**
  * Pluralizes a catalog phrase. Phrases built as "<unit> of <substance>" pluralize
@@ -209,42 +206,6 @@ export function composeInvoiceDescription(draft: InvoiceDraft): string {
 
   if (work.length > 0) {
     blocks.push(section(HEADING.work, work.join(' ')));
-  }
-
-  // ---- why it happened ----
-  // Cause-specific explanations first, then the part's standing service note,
-  // which is what answers "why did this fail if my unit is almost new?".
-  const explanations = unique(
-    lines.flatMap((line) => {
-      const explanation = findCause(line.itemId, line.causeId)?.explanation;
-      return explanation ? [explanation] : [];
-    }),
-  );
-
-  const serviceNotes = unique(
-    lines.flatMap((line) => {
-      // Say nothing about a part the technician did not diagnose.
-      if (line.causeId === undefined || line.action === 'tested') return [];
-
-      const item = CATALOG_BY_ID.get(line.itemId);
-      if (!item?.serviceNote) return [];
-
-      // For a wear or consumable part the note *is* the message: replacement is
-      // expected and says nothing about the equipment. For a component, the
-      // cause explanation already told that story, so adding the note repeats it.
-      const isReassurance = item.serviceClass === 'wear' || item.serviceClass === 'consumable';
-      const hasExplanation = findCause(line.itemId, line.causeId)?.explanation !== undefined;
-      return isReassurance || !hasExplanation ? [item.serviceNote] : [];
-    }),
-  );
-
-  const preventable = lines.some(
-    (line) => findCause(line.itemId, line.causeId)?.preventable === true,
-  );
-
-  const why = [...explanations, ...serviceNotes, ...(preventable ? [PREVENTABLE_NOTE] : [])];
-  if (why.length > 0) {
-    blocks.push(section(HEADING.why, why.join('\n\n')));
   }
 
   // ---- closing ----

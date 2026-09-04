@@ -27,7 +27,7 @@
     "actionFor": "Qué se hizo con {part}",
     "causeFor": "Por qué se cambió {part}",
     "causePlaceholder": "¿Por qué? — opcional",
-    "causeHint": "Elige la causa y la factura le explica al cliente por qué falló."
+    "causeHint": "Elige la causa y aparece en los hallazgos de la factura."
   },
   "callTypes": {
     "no-cooling": "No enfría",
@@ -53,6 +53,11 @@
     "light": "Claro",
     "dark": "Oscuro"
   },
-  "locale": { "switch": "Idioma" },
-  "status": { "offline": "Sin conexión", "local": "Guardado en el equipo" }
+  "locale": {
+    "switch": "Idioma"
+  },
+  "status": {
+    "offline": "Sin conexión",
+    "local": "Guardado en el equipo"
+  }
 }
