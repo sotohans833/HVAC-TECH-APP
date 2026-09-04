@@ -8,11 +8,14 @@
     "heading": "Toca lo que reparaste",
     "subheading": "La descripción de la factura se arma sola, en inglés profesional, mientras trabajas.",
     "callType": "Tipo de servicio",
+    "scope": "Alcance",
     "unitLabel": "Equipo",
     "unitPlaceholder": "Marca y modelo",
     "parts": "Partes y trabajo",
     "ticket": "Factura",
     "empty": "Toca una parte para empezar. Lo que elijas aparece aquí redactado y listo para copiar.",
+    "emptyMaintenance": "En un mantenimiento no necesitas tocar nada: la descripción ya lista todo lo que inspeccionaste. Agrega partes solo si cambiaste algo.",
+    "emptyDiagnostic": "Si revisaste el sistema y todo salió bien, la descripción ya explica qué probaste y que no encontraste falla.",
     "copy": "Copiar descripción",
     "copied": "Copiado",
     "clear": "Limpiar",
@@ -20,7 +23,11 @@
     "quantity": "Cantidad de {part}",
     "decrease": "Quitar uno",
     "increase": "Agregar uno",
-    "remove": "Quitar {part} de la factura"
+    "remove": "Quitar {part} de la factura",
+    "actionFor": "Qué se hizo con {part}",
+    "causeFor": "Por qué se cambió {part}",
+    "causePlaceholder": "¿Por qué? — opcional",
+    "causeHint": "Elige la causa y la factura le explica al cliente por qué falló."
   },
   "callTypes": {
     "no-cooling": "No enfría",
@@ -28,10 +35,17 @@
     "maintenance": "Mantenimiento",
     "install": "Instalación"
   },
+  "scopes": {
+    "cooling": "Enfriamiento",
+    "heating": "Calefacción",
+    "full": "Sistema completo"
+  },
   "actions": {
     "replaced": "Cambiado",
     "repaired": "Reparado",
     "cleaned": "Limpiado",
+    "added": "Agregado",
+    "performed": "Realizado",
     "tested": "Probado"
   },
   "theme": {

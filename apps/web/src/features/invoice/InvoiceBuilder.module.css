@@ -134,12 +134,21 @@
   border-bottom: 1px solid var(--mf-border);
 }
 
+/* Two rows per line: what it is on top, why it was touched underneath. The
+   cause is the sentence the customer actually reads, so it gets its own row
+   with room to breathe rather than being squeezed in beside the stepper. */
 .line {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 20px;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 20px;
   border-top: 1px solid var(--mf-border);
+}
+
+.lineTop {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .lineIcon {
@@ -147,25 +156,29 @@
   flex: none;
 }
 
-.lineText {
+.lineName {
   flex: 1;
   min-width: 0;
-}
-
-.lineName {
-  display: block;
   font-family: var(--mf-font-cond);
   font-weight: 600;
   font-size: 0.9375rem;
   line-height: 1.25;
 }
 
-.lineAction {
-  font-family: var(--mf-font-mono);
-  font-size: 0.6875rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--mf-text-3);
+.lineControls {
+  display: flex;
+  gap: 8px;
+  padding-left: 32px;
+}
+
+.actionSelect {
+  flex: 0 0 auto;
+  max-width: 40%;
+}
+
+.causeSelect {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .preview {
@@ -176,6 +189,9 @@
    the technician is about to paste somewhere, not as editable prose. */
 .previewText {
   margin: 0;
+  max-height: 46vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   white-space: pre-wrap;
   font-family: var(--mf-font-mono);
   font-size: 0.8125rem;
@@ -187,4 +203,15 @@
   display: flex;
   gap: 10px;
   padding: 0 20px 18px;
+}
+
+.hint {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 2px 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--mf-text-3);
 }

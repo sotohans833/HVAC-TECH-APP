@@ -8,11 +8,14 @@
     "heading": "Tap what you fixed",
     "subheading": "The invoice description writes itself in professional English while you work.",
     "callType": "Call type",
+    "scope": "Scope",
     "unitLabel": "Equipment",
     "unitPlaceholder": "Make and model",
     "parts": "Parts and labor",
     "ticket": "Invoice",
     "empty": "Tap a part to start. Everything you pick shows up here, written and ready to copy.",
+    "emptyMaintenance": "On a maintenance call you do not have to tap anything — the description already lists everything you inspected. Add parts only if you replaced something.",
+    "emptyDiagnostic": "If you checked the system and everything was fine, the description already covers what you tested and that no fault was found.",
     "copy": "Copy description",
     "copied": "Copied",
     "clear": "Clear",
@@ -20,7 +23,11 @@
     "quantity": "{part} quantity",
     "decrease": "Remove one",
     "increase": "Add one",
-    "remove": "Remove {part} from the invoice"
+    "remove": "Remove {part} from the invoice",
+    "actionFor": "What was done to the {part}",
+    "causeFor": "Why the {part} was replaced",
+    "causePlaceholder": "Why? — optional",
+    "causeHint": "Pick the cause and the invoice explains to the customer why it failed."
   },
   "callTypes": {
     "no-cooling": "No cooling",
@@ -28,10 +35,17 @@
     "maintenance": "Maintenance",
     "install": "Installation"
   },
+  "scopes": {
+    "cooling": "Cooling",
+    "heating": "Heating",
+    "full": "Full system"
+  },
   "actions": {
     "replaced": "Replaced",
     "repaired": "Repaired",
     "cleaned": "Cleaned",
+    "added": "Added",
+    "performed": "Performed",
     "tested": "Tested"
   },
   "theme": { "toggle": "Toggle theme", "light": "Light", "dark": "Dark" },

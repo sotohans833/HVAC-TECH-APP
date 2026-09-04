@@ -1,4 +1,5 @@
-import { CATALOG_BY_ID, type WorkAction } from './catalog';
+import { CATALOG_BY_ID, findCause, type WorkAction } from './catalog';
+import { DIAGNOSTIC_CHECKS, maintenanceTasks, type MaintenanceScope } from './procedures';
 
 /**
  * Deterministic invoice composer.
@@ -11,6 +12,11 @@ import { CATALOG_BY_ID, type WorkAction } from './catalog';
  * A later phase adds an optional polish pass that may only rephrase the prose
  * this function already produced; it can never add, drop, or alter a line item.
  * See docs/adr/0002-deterministic-invoice.md.
+ *
+ * The description is written in sections because it has two readers who want
+ * different things: the office needs to see what was done, and the homeowner
+ * wants to know why it broke and whether it says anything about their equipment.
+ * See docs/adr/0004-explaining-the-why.md.
  */
 
 export type CallType = 'no-cooling' | 'no-heat' | 'maintenance' | 'install';
@@ -19,6 +25,8 @@ export interface LineItem {
   itemId: string;
   quantity: number;
   action: WorkAction;
+  /** Which of the part's known failure causes applied. */
+  causeId?: string;
 }
 
 export interface InvoiceDraft {
@@ -26,6 +34,8 @@ export interface InvoiceDraft {
   lines: readonly LineItem[];
   /** Equipment the work was performed on, e.g. "Goodman GSX140361". */
   unit?: string;
+  /** Which side of the system a maintenance visit covered. */
+  maintenanceScope?: MaintenanceScope;
 }
 
 const OPENING: Record<CallType, string> = {
@@ -41,27 +51,64 @@ const CLOSING: Record<CallType, string> = {
   'no-cooling':
     'Verified system operation after repair. Measured supply and return temperatures and confirmed refrigerant charge within manufacturer specification. System was cooling properly at time of departure.',
   'no-heat':
-    'Verified system operation after repair. Confirmed ignition sequence, flame signal, and temperature rise within manufacturer specification. System was heating properly at time of departure.',
+    'Verified system operation after repair. Confirmed ignition sequence, flame signal and temperature rise within manufacturer specification. System was heating properly at time of departure.',
   maintenance:
     'Confirmed all safety controls operational and system performance within manufacturer specification at time of departure.',
   install:
     'Completed start-up, verified charge and airflow, and reviewed system operation with the customer.',
 };
 
-/** Past-tense verb phrases, grouped so the invoice reads as prose, not a list. */
 const ACTION_VERB: Record<WorkAction, string> = {
   replaced: 'Replaced',
   repaired: 'Repaired',
   cleaned: 'Cleaned and serviced',
+  added: 'Added',
+  performed: 'Performed',
   tested: 'Tested and verified',
 };
 
-const ACTION_ORDER: readonly WorkAction[] = ['replaced', 'repaired', 'cleaned', 'tested'];
+const ACTION_ORDER: readonly WorkAction[] = [
+  'replaced',
+  'repaired',
+  'cleaned',
+  'added',
+  'performed',
+  'tested',
+];
 
+const HEADING = {
+  tasks: 'INSPECTION AND SERVICE PERFORMED',
+  findings: 'FINDINGS',
+  work: 'WORK PERFORMED',
+  why: 'WHY THIS HAPPENED',
+  status: 'SYSTEM STATUS AT DEPARTURE',
+} as const;
+
+const NO_FAULT_FOUND =
+  'The system was tested throughout and found operating within manufacturer specification. No failure was found at the time of this visit. Intermittent conditions do not always reproduce during a single visit — please contact us if the problem returns, and note the time of day and the outdoor temperature when it happens.';
+
+const ALL_WITHIN_SPEC =
+  'All readings were within manufacturer specification at the time of this visit and no repairs were required. All safety controls were confirmed operational before departure.';
+
+const PREVENTABLE_NOTE =
+  'Several of the conditions found on this visit are preventable with routine maintenance. A seasonal maintenance visit keeps the coils clean, the condensate drain clear, the filter current and the electrical connections tight, which is what protects the compressor and the motors from the operating conditions that shorten their service life.';
+
+/**
+ * Pluralizes a catalog phrase. Phrases built as "<unit> of <substance>" pluralize
+ * on the unit — "2 pounds of refrigerant", never "2 pound of refrigerants".
+ */
 function pluralize(phrase: string, quantity: number): string {
   if (quantity === 1) return phrase;
-  // The catalog uses simple noun phrases, so the regular rule is enough here.
-  return /(s|sh|ch|x|z)$/.test(phrase) ? `${phrase}es` : `${phrase}s`;
+
+  const ofIndex = phrase.indexOf(' of ');
+  if (ofIndex > 0) {
+    return `${addS(phrase.slice(0, ofIndex))}${phrase.slice(ofIndex)}`;
+  }
+  return addS(phrase);
+}
+
+function addS(word: string): string {
+  return /(s|sh|ch|x|z)$/.test(word) ? `${word}es` : `${word}s`;
 }
 
 function joinList(parts: readonly string[]): string {
@@ -71,11 +118,28 @@ function joinList(parts: readonly string[]): string {
   return `${head} and ${parts[parts.length - 1]}`;
 }
 
+function bulleted(items: readonly string[]): string {
+  return items.map((item) => `• ${item}`).join('\n');
+}
+
+function capitalize(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+/** Drops repeats while keeping first-seen order. */
+function unique(values: readonly string[]): string[] {
+  return [...new Set(values)];
+}
+
+function validLines(lines: readonly LineItem[]): LineItem[] {
+  return lines.filter((line) => line.quantity > 0 && CATALOG_BY_ID.has(line.itemId));
+}
+
 /** One sentence per action group: "Replaced 1 dual run capacitor and 1 contactor." */
-function sentenceFor(action: WorkAction, lines: readonly LineItem[]): string | null {
+function workSentence(action: WorkAction, lines: readonly LineItem[]): string | null {
   const phrases = lines.flatMap((line) => {
     const item = CATALOG_BY_ID.get(line.itemId);
-    if (!item || line.quantity < 1) return [];
+    if (!item) return [];
     return [`${line.quantity} ${pluralize(item.invoicePhrase, line.quantity)}`];
   });
 
@@ -83,29 +147,123 @@ function sentenceFor(action: WorkAction, lines: readonly LineItem[]): string | n
   return `${ACTION_VERB[action]} ${joinList(phrases)}.`;
 }
 
+function section(heading: string, body: string): string {
+  return `${heading}\n${body}`;
+}
+
 export function composeInvoiceDescription(draft: InvoiceDraft): string {
-  const paragraphs: string[] = [];
+  const lines = validLines(draft.lines);
+  const blocks: string[] = [];
 
-  const opening = draft.unit
-    ? `${OPENING[draft.callType]} Work performed on ${draft.unit}.`
-    : OPENING[draft.callType];
-  paragraphs.push(opening);
+  // ---- opening ----
+  blocks.push(
+    draft.unit
+      ? `${OPENING[draft.callType]} Work performed on ${draft.unit}.`
+      : OPENING[draft.callType],
+  );
 
-  const body = ACTION_ORDER.map((action) =>
-    sentenceFor(
+  // Narrowed rather than a boolean so `DIAGNOSTIC_CHECKS` can be indexed safely.
+  const diagnosticType =
+    draft.callType === 'no-cooling' || draft.callType === 'no-heat' ? draft.callType : null;
+  const noFaultFound =
+    diagnosticType !== null &&
+    (lines.length === 0 || lines.every((line) => line.causeId === 'no-fault-found'));
+
+  // ---- what was inspected ----
+  // A maintenance visit always lists its procedure, because "nothing was broken"
+  // is the most common outcome and the least self-evident on a bill. A
+  // diagnostic call lists its checks only when nothing was replaced, where the
+  // list is the entire justification for the visit.
+  if (draft.callType === 'maintenance') {
+    blocks.push(
+      section(HEADING.tasks, bulleted(maintenanceTasks(draft.maintenanceScope ?? 'cooling'))),
+    );
+  } else if (diagnosticType !== null && noFaultFound) {
+    blocks.push(section(HEADING.tasks, bulleted(DIAGNOSTIC_CHECKS[diagnosticType])));
+  }
+
+  // ---- findings ----
+  const findings = unique(
+    lines.flatMap((line) => {
+      const finding = findCause(line.itemId, line.causeId)?.finding;
+      return finding ? [finding] : [];
+    }),
+  );
+
+  // One finding reads as a sentence. Several read as a list — each one is a
+  // clause with its own commas, so joining them produced a run-on nobody would
+  // read on a bill.
+  if (findings.length === 1) {
+    blocks.push(section(HEADING.findings, `Found ${findings[0]}.`));
+  } else if (findings.length > 1) {
+    blocks.push(section(HEADING.findings, bulleted(findings.map(capitalize))));
+  }
+
+  // ---- work performed ----
+  const work = ACTION_ORDER.map((action) =>
+    workSentence(
       action,
-      draft.lines.filter((line) => line.action === action),
+      lines.filter((line) => line.action === action),
     ),
   ).filter((sentence): sentence is string => sentence !== null);
 
-  if (body.length > 0) paragraphs.push(body.join(' '));
+  if (work.length > 0) {
+    blocks.push(section(HEADING.work, work.join(' ')));
+  }
 
-  paragraphs.push(CLOSING[draft.callType]);
+  // ---- why it happened ----
+  // Cause-specific explanations first, then the part's standing service note,
+  // which is what answers "why did this fail if my unit is almost new?".
+  const explanations = unique(
+    lines.flatMap((line) => {
+      const explanation = findCause(line.itemId, line.causeId)?.explanation;
+      return explanation ? [explanation] : [];
+    }),
+  );
 
-  return paragraphs.join('\n\n');
+  const serviceNotes = unique(
+    lines.flatMap((line) => {
+      // Say nothing about a part the technician did not diagnose.
+      if (line.causeId === undefined || line.action === 'tested') return [];
+
+      const item = CATALOG_BY_ID.get(line.itemId);
+      if (!item?.serviceNote) return [];
+
+      // For a wear or consumable part the note *is* the message: replacement is
+      // expected and says nothing about the equipment. For a component, the
+      // cause explanation already told that story, so adding the note repeats it.
+      const isReassurance = item.serviceClass === 'wear' || item.serviceClass === 'consumable';
+      const hasExplanation = findCause(line.itemId, line.causeId)?.explanation !== undefined;
+      return isReassurance || !hasExplanation ? [item.serviceNote] : [];
+    }),
+  );
+
+  const preventable = lines.some(
+    (line) => findCause(line.itemId, line.causeId)?.preventable === true,
+  );
+
+  const why = [...explanations, ...serviceNotes, ...(preventable ? [PREVENTABLE_NOTE] : [])];
+  if (why.length > 0) {
+    blocks.push(section(HEADING.why, why.join('\n\n')));
+  }
+
+  // ---- closing ----
+  const status: string[] = [];
+  if (noFaultFound) {
+    status.push(NO_FAULT_FOUND);
+  } else {
+    if (draft.callType === 'maintenance' && lines.length === 0) {
+      status.push(ALL_WITHIN_SPEC);
+    } else {
+      status.push(CLOSING[draft.callType]);
+    }
+  }
+  blocks.push(section(HEADING.status, status.join(' ')));
+
+  return blocks.join('\n\n');
 }
 
-/** Total distinct parts on the ticket, used for the header count. */
+/** Total pieces on the ticket, used for the header count. */
 export function lineCount(lines: readonly LineItem[]): number {
   return lines.reduce((total, line) => total + line.quantity, 0);
 }

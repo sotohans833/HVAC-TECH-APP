@@ -1,0 +1,59 @@
+.wrap {
+  position: relative;
+  display: inline-flex;
+  min-width: 0;
+}
+
+.select {
+  appearance: none;
+  width: 100%;
+  min-height: 38px;
+  padding: 0 30px 0 10px;
+
+  background: var(--mf-surface-2);
+  border: 1.5px solid var(--mf-border);
+  border-radius: var(--mf-r-sm);
+  color: var(--mf-text);
+
+  font-family: var(--mf-font-sans);
+  font-size: 0.875rem;
+  line-height: 1.2;
+  cursor: pointer;
+  text-overflow: ellipsis;
+
+  transition:
+    border-color var(--mf-dur) var(--mf-ease),
+    background-color var(--mf-dur) var(--mf-ease);
+}
+
+@media (hover: hover) {
+  .select:hover {
+    border-color: var(--mf-border-strong);
+  }
+}
+
+.select:focus {
+  border-color: var(--mf-low);
+}
+
+/* Nothing chosen yet reads as a prompt, not as a value. */
+.unset {
+  color: var(--mf-text-3);
+  border-style: dashed;
+}
+
+.chevron {
+  position: absolute;
+  right: 9px;
+  top: 50%;
+  translate: 0 -50%;
+  pointer-events: none;
+  color: var(--mf-text-3);
+}
+
+/* Native option lists take the OS palette, so pin both colors explicitly or
+   dark-theme options render as dark text on a dark ground in some browsers. */
+.select option {
+  background: var(--mf-surface);
+  color: var(--mf-text);
+}

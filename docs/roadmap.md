@@ -25,8 +25,11 @@ Phase status as of 2026-09-03.
 
 ## Phase 1 — in progress
 
-Done: bilingual catalog of 22 parts, deterministic composer with unit tests,
-tile grid, ticket panel, quantity steppers, copy to clipboard.
+Done: bilingual catalog of 22 parts with failure causes and customer-facing
+explanations, deterministic composer with 22 unit tests, preventative
+maintenance and diagnostic procedure lists, tile grid, ticket panel with
+per-line action and cause selection, quantity steppers, copy to clipboard.
 
-Next: per-line action switching (replaced / repaired / cleaned / tested),
-IndexedDB persistence, a shareable invoice view, and photo attachments.
+Next: measured readings on the invoice (superheat, subcooling, temperature
+split, capacitor microfarads, amp draws), IndexedDB persistence, a shareable
+invoice view, and photo attachments.

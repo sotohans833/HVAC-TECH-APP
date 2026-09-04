@@ -11,35 +11,49 @@ import {
   PartIcon,
   Panel,
   SegmentedControl,
+  Select,
   Stepper,
   TrashIcon,
 } from '@manifold/ui';
 import { CATALOG, CATEGORY_LABELS, CATEGORY_ORDER, CATALOG_BY_ID } from '@/lib/catalog';
+import type { WorkAction } from '@/lib/catalog';
 import { composeInvoiceDescription, lineCount, type CallType } from '@/lib/invoice';
+import type { MaintenanceScope } from '@/lib/procedures';
 import type { Locale } from '@/i18n/routing';
 import { useTicket } from './store';
 import styles from './InvoiceBuilder.module.css';
 
 const CALL_TYPES: readonly CallType[] = ['no-cooling', 'no-heat', 'maintenance', 'install'];
+const SCOPES: readonly MaintenanceScope[] = ['cooling', 'heating', 'full'];
 
 export function InvoiceBuilder({ locale }: { locale: Locale }) {
   const t = useTranslations();
   const {
     callType,
+    maintenanceScope,
     unit,
     lines,
     setCallType,
+    setMaintenanceScope,
     setUnit,
     addPart,
     setQuantity,
+    setAction,
+    setCause,
     removePart,
     clear,
   } = useTicket();
   const [copied, setCopied] = useState(false);
 
   const description = useMemo(
-    () => composeInvoiceDescription({ callType, lines, ...(unit ? { unit } : {}) }),
-    [callType, lines, unit],
+    () =>
+      composeInvoiceDescription({
+        callType,
+        lines,
+        maintenanceScope,
+        ...(unit ? { unit } : {}),
+      }),
+    [callType, lines, maintenanceScope, unit],
   );
 
   const quantities = useMemo(
@@ -58,10 +72,14 @@ export function InvoiceBuilder({ locale }: { locale: Locale }) {
     }
   }
 
-  const callTypeOptions = CALL_TYPES.map((value) => ({
-    value,
-    label: t(`callTypes.${value}`),
-  }));
+  // Even an empty ticket produces a real description now, so the preview is
+  // always worth showing — on a maintenance call it is the whole invoice.
+  const emptyHint =
+    callType === 'maintenance'
+      ? t('builder.emptyMaintenance')
+      : callType === 'install'
+        ? t('builder.empty')
+        : t('builder.emptyDiagnostic');
 
   return (
     <>
@@ -73,16 +91,26 @@ export function InvoiceBuilder({ locale }: { locale: Locale }) {
 
       <div className={styles.controls}>
         <div className={styles.field}>
-          <span className={styles.fieldLabel} id="call-type-label">
-            {t('builder.callType')}
-          </span>
+          <span className={styles.fieldLabel}>{t('builder.callType')}</span>
           <SegmentedControl
-            options={callTypeOptions}
+            options={CALL_TYPES.map((value) => ({ value, label: t(`callTypes.${value}`) }))}
             value={callType}
             onChange={setCallType}
             label={t('builder.callType')}
           />
         </div>
+
+        {callType === 'maintenance' ? (
+          <div className={styles.field}>
+            <span className={styles.fieldLabel}>{t('builder.scope')}</span>
+            <SegmentedControl
+              options={SCOPES.map((value) => ({ value, label: t(`scopes.${value}`) }))}
+              value={maintenanceScope}
+              onChange={setMaintenanceScope}
+              label={t('builder.scope')}
+            />
+          </div>
+        ) : null}
 
         <div className={styles.field}>
           <label className={styles.fieldLabel} htmlFor="unit">
@@ -135,27 +163,18 @@ export function InvoiceBuilder({ locale }: { locale: Locale }) {
             aside={t('builder.itemsOnTicket', { count: lineCount(lines) })}
             flush
           >
-            {lines.length === 0 ? (
-              <div className={styles.preview}>
-                <p className={styles.empty}>{t('builder.empty')}</p>
-              </div>
-            ) : (
-              <>
-                <ul className={styles.lines}>
-                  {lines.map((line) => {
-                    const item = CATALOG_BY_ID.get(line.itemId);
-                    if (!item) return null;
-                    const name = item.label[locale];
+            {lines.length > 0 ? (
+              <ul className={styles.lines}>
+                {lines.map((line) => {
+                  const item = CATALOG_BY_ID.get(line.itemId);
+                  if (!item) return null;
+                  const name = item.label[locale];
 
-                    return (
-                      <li key={line.itemId} className={styles.line}>
+                  return (
+                    <li key={line.itemId} className={styles.line}>
+                      <div className={styles.lineTop}>
                         <PartIcon id={item.icon} size={22} className={styles.lineIcon} />
-                        <span className={styles.lineText}>
-                          <span className={styles.lineName}>{name}</span>
-                          <span className={styles.lineAction}>
-                            {t(`actions.${line.action}`)}
-                          </span>
-                        </span>
+                        <span className={styles.lineName}>{name}</span>
                         <Stepper
                           value={line.quantity}
                           onChange={(next) => setQuantity(line.itemId, next)}
@@ -172,34 +191,65 @@ export function InvoiceBuilder({ locale }: { locale: Locale }) {
                         >
                           <TrashIcon size={17} />
                         </button>
-                      </li>
-                    );
-                  })}
-                </ul>
+                      </div>
 
-                <div className={styles.preview}>
-                  <p className={styles.previewText}>{description}</p>
-                </div>
-
-                <div className={styles.previewActions}>
-                  <Button onClick={copyDescription} block>
-                    {copied ? <CheckIcon size={18} /> : <CopyIcon size={18} />}
-                    {copied ? t('builder.copied') : t('builder.copy')}
-                  </Button>
-                  <Button variant="ghost" onClick={clear}>
-                    {t('builder.clear')}
-                  </Button>
-                </div>
-              </>
+                      <div className={styles.lineControls}>
+                        <Select
+                          value={line.action}
+                          onValueChange={(next) => setAction(line.itemId, next as WorkAction)}
+                          options={item.actions.map((action) => ({
+                            value: action,
+                            label: t(`actions.${action}`),
+                          }))}
+                          label={t('builder.actionFor', { part: name })}
+                          className={styles.actionSelect}
+                        />
+                        <Select
+                          value={line.causeId ?? ''}
+                          onValueChange={(next) => setCause(line.itemId, next)}
+                          options={item.causes.map((cause) => ({
+                            value: cause.id,
+                            label: cause.label[locale],
+                          }))}
+                          placeholder={t('builder.causePlaceholder')}
+                          label={t('builder.causeFor', { part: name })}
+                          className={styles.causeSelect}
+                        />
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : (
+              <div className={styles.preview}>
+                <p className={styles.empty}>{emptyHint}</p>
+              </div>
             )}
+
+            <div className={styles.preview}>
+              <p className={styles.previewText}>{description}</p>
+            </div>
+
+            <div className={styles.previewActions}>
+              <Button onClick={copyDescription} block>
+                {copied ? <CheckIcon size={18} /> : <CopyIcon size={18} />}
+                {copied ? t('builder.copied') : t('builder.copy')}
+              </Button>
+              {lines.length > 0 ? (
+                <Button variant="ghost" onClick={clear}>
+                  {t('builder.clear')}
+                </Button>
+              ) : null}
+            </div>
           </Panel>
 
           {lines.length > 0 ? (
-            <div style={{ marginTop: 12, display: 'flex', justifyContent: 'flex-end' }}>
+            <p className={styles.hint}>
               <Badge tone="low">
                 {locale === 'es' ? 'Factura en inglés' : 'Invoice in English'}
               </Badge>
-            </div>
+              <span>{t('builder.causeHint')}</span>
+            </p>
           ) : null}
         </div>
       </div>
