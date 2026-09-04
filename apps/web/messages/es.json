@@ -27,7 +27,11 @@
     "actionFor": "Qué se hizo con {part}",
     "causeFor": "Por qué se cambió {part}",
     "causePlaceholder": "¿Por qué? — opcional",
-    "causeHint": "Elige la causa y aparece en los hallazgos de la factura."
+    "causeHint": "Elige la causa y aparece en los hallazgos de la factura.",
+    "customerLabel": "Cliente",
+    "customerPlaceholder": "Nombre o dirección",
+    "finish": "Terminar trabajo",
+    "finishHint": "Se guarda en el historial y se abre uno nuevo."
   },
   "callTypes": {
     "no-cooling": "No enfría",
@@ -59,5 +63,22 @@
   "status": {
     "offline": "Sin conexión",
     "local": "Guardado en el equipo"
+  },
+  "nav": {
+    "label": "Secciones",
+    "builder": "Trabajo",
+    "jobs": "Historial"
+  },
+  "jobs": {
+    "eyebrow": "Trabajos recientes",
+    "heading": "Historial de trabajos",
+    "empty": "Todavía no hay trabajos guardados. Lo que hagas en la pestaña Trabajo se guarda solo, aunque estés sin señal.",
+    "unnamed": "Sin nombre",
+    "open": "Abrir",
+    "delete": "Borrar el trabajo de {name}",
+    "status": {
+      "draft": "En curso",
+      "completed": "Terminado"
+    }
   }
 }

@@ -24,7 +24,6 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-right: auto;
 }
 
 /* A pair of gauge dots — low side then high side. The whole identity in 20px. */
@@ -81,4 +80,38 @@
     border-color: var(--mf-border-strong);
     color: var(--mf-text);
   }
+}
+
+.app-nav {
+  display: flex;
+  gap: 4px;
+  margin-right: auto;
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 13px;
+  border-radius: var(--mf-r-md);
+  color: var(--mf-text-3);
+  text-decoration: none;
+  font-family: var(--mf-font-cond);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  transition:
+    background-color var(--mf-dur) var(--mf-ease),
+    color var(--mf-dur) var(--mf-ease);
+}
+
+@media (hover: hover) {
+  .nav-link:hover {
+    background: var(--mf-surface-2);
+    color: var(--mf-text);
+  }
+}
+
+.nav-link[aria-current='page'] {
+  background: var(--mf-surface-2);
+  color: var(--mf-text);
 }

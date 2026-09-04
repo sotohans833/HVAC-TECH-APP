@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Badge, GlobeIcon, MoonIcon, SunIcon } from '@manifold/ui';
-import { usePathname, useRouter } from '@/i18n/navigation';
+import { Link, usePathname, useRouter } from '@/i18n/navigation';
 import { routing, type Locale } from '@/i18n/routing';
 
 type Theme = 'light' | 'dark';
@@ -61,6 +61,23 @@ export function AppBar() {
         </span>
         <span className="brand-name">{t('app.name')}</span>
       </div>
+
+      <nav className="app-nav" aria-label={t('nav.label')}>
+        <Link
+          href="/"
+          className="nav-link"
+          aria-current={pathname === '/' ? 'page' : undefined}
+        >
+          {t('nav.builder')}
+        </Link>
+        <Link
+          href="/jobs"
+          className="nav-link"
+          aria-current={pathname === '/jobs' ? 'page' : undefined}
+        >
+          {t('nav.jobs')}
+        </Link>
+      </nav>
 
       <Badge tone={online ? 'ok' : 'warn'} dot>
         {online ? t('status.local') : t('status.offline')}

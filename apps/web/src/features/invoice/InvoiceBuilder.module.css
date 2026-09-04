@@ -215,3 +215,11 @@
   line-height: 1.5;
   color: var(--mf-text-3);
 }
+
+.finish {
+  margin-top: 12px;
+}
+
+.finish .hint {
+  margin-top: 10px;
+}

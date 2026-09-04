@@ -27,7 +27,11 @@
     "actionFor": "What was done to the {part}",
     "causeFor": "Why the {part} was replaced",
     "causePlaceholder": "Why? — optional",
-    "causeHint": "Pick the cause and it appears in the invoice findings."
+    "causeHint": "Pick the cause and it appears in the invoice findings.",
+    "customerLabel": "Customer",
+    "customerPlaceholder": "Name or address",
+    "finish": "Finish job",
+    "finishHint": "Saves to history and opens a new one."
   },
   "callTypes": {
     "no-cooling": "No cooling",
@@ -59,5 +63,22 @@
   "status": {
     "offline": "Offline",
     "local": "Saved on device"
+  },
+  "nav": {
+    "label": "Sections",
+    "builder": "Work order",
+    "jobs": "History"
+  },
+  "jobs": {
+    "eyebrow": "Recent work",
+    "heading": "Job history",
+    "empty": "No saved jobs yet. Anything you do on the Work order tab saves itself, even with no signal.",
+    "unnamed": "Unnamed",
+    "open": "Open",
+    "delete": "Delete the job for {name}",
+    "status": {
+      "draft": "In progress",
+      "completed": "Finished"
+    }
   }
 }

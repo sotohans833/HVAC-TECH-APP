@@ -38,3 +38,22 @@ Deferred: a customer-facing explainer view built on the `explanation` and
 `serviceNote` content already in the catalog. Those explanations were on the
 invoice and were pulled back off it — see ADR 0005 — because they belong in a
 conversation with the customers who ask, not on every bill.
+
+## Phase 2a — delivered
+
+- Dexie/IndexedDB store: the job record is the unit of storage, see ADR 0006
+- The open draft loads on mount and autosaves on a debounce
+- Job history: finish a job, reopen it later, delete it
+- Customer field so a job is recognizable in the list
+- 9 storage tests running against fake-indexeddb, 30 unit tests total
+
+Verified in a real browser: filled a ticket, reloaded the page, and the customer,
+equipment, quantities and selected cause all survived; finishing the job moved it
+into history.
+
+## Phase 2b — next
+
+FastAPI, Pydantic schemas generating the front-end types, auth, and sync that
+reconciles against the local store rather than replacing it. Docker Compose with
+nginx in front. An end-to-end Playwright test covering the persistence flow that
+was checked by hand this phase.

@@ -17,10 +17,12 @@ import {
 } from '@manifold/ui';
 import { CATALOG, CATEGORY_LABELS, CATEGORY_ORDER, CATALOG_BY_ID } from '@/lib/catalog';
 import type { WorkAction } from '@/lib/catalog';
+import { saveJob } from '@/lib/db';
 import { composeInvoiceDescription, lineCount, type CallType } from '@/lib/invoice';
 import type { MaintenanceScope } from '@/lib/procedures';
 import type { Locale } from '@/i18n/routing';
 import { useTicket } from './store';
+import { useJobPersistence } from './useJobPersistence';
 import styles from './InvoiceBuilder.module.css';
 
 const CALL_TYPES: readonly CallType[] = ['no-cooling', 'no-heat', 'maintenance', 'install'];
@@ -29,21 +31,24 @@ const SCOPES: readonly MaintenanceScope[] = ['cooling', 'heating', 'full'];
 export function InvoiceBuilder({ locale }: { locale: Locale }) {
   const t = useTranslations();
   const {
-    callType,
-    maintenanceScope,
-    unit,
-    lines,
+    job,
+    setCustomer,
+    setUnit,
     setCallType,
     setMaintenanceScope,
-    setUnit,
     addPart,
     setQuantity,
     setAction,
     setCause,
     removePart,
-    clear,
+    clearLines,
+    complete,
   } = useTicket();
+
+  useJobPersistence();
   const [copied, setCopied] = useState(false);
+
+  const { callType, maintenanceScope, customer, unit, lines } = job;
 
   const description = useMemo(
     () =>
@@ -72,14 +77,24 @@ export function InvoiceBuilder({ locale }: { locale: Locale }) {
     }
   }
 
-  // Even an empty ticket produces a real description now, so the preview is
-  // always worth showing — on a maintenance call it is the whole invoice.
+  /** Files the job into history and opens a fresh one. */
+  async function finishJob() {
+    try {
+      await saveJob({ ...job, status: 'completed' });
+    } catch {
+      // Storage unavailable. Starting the next job still beats being stuck.
+    }
+    complete();
+  }
+
   const emptyHint =
     callType === 'maintenance'
       ? t('builder.emptyMaintenance')
       : callType === 'install'
         ? t('builder.empty')
         : t('builder.emptyDiagnostic');
+
+  const hasWork = lines.length > 0 || customer.trim() !== '' || unit.trim() !== '';
 
   return (
     <>
@@ -111,6 +126,20 @@ export function InvoiceBuilder({ locale }: { locale: Locale }) {
             />
           </div>
         ) : null}
+
+        <div className={styles.field}>
+          <label className={styles.fieldLabel} htmlFor="customer">
+            {t('builder.customerLabel')}
+          </label>
+          <input
+            id="customer"
+            className={styles.input}
+            value={customer}
+            onChange={(event) => setCustomer(event.target.value)}
+            placeholder={t('builder.customerPlaceholder')}
+            autoComplete="off"
+          />
+        </div>
 
         <div className={styles.field}>
           <label className={styles.fieldLabel} htmlFor="unit">
@@ -236,20 +265,25 @@ export function InvoiceBuilder({ locale }: { locale: Locale }) {
                 {copied ? t('builder.copied') : t('builder.copy')}
               </Button>
               {lines.length > 0 ? (
-                <Button variant="ghost" onClick={clear}>
+                <Button variant="ghost" onClick={clearLines}>
                   {t('builder.clear')}
                 </Button>
               ) : null}
             </div>
           </Panel>
 
-          {lines.length > 0 ? (
-            <p className={styles.hint}>
-              <Badge tone="low">
-                {locale === 'es' ? 'Factura en inglés' : 'Invoice in English'}
-              </Badge>
-              <span>{t('builder.causeHint')}</span>
-            </p>
+          {hasWork ? (
+            <div className={styles.finish}>
+              <Button variant="secondary" block onClick={finishJob}>
+                {t('builder.finish')}
+              </Button>
+              <p className={styles.hint}>
+                <Badge tone="low">
+                  {locale === 'es' ? 'Factura en inglés' : 'Invoice in English'}
+                </Badge>
+                <span>{t('builder.finishHint')}</span>
+              </p>
+            </div>
           ) : null}
         </div>
       </div>
