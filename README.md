@@ -45,6 +45,11 @@ pnpm typecheck && pnpm test
 
 Node 22+ and pnpm 10+.
 
+Reading equipment nameplates from photos needs an Anthropic API key on the
+server. Copy `apps/web/.env.example` to `apps/web/.env.local` and set
+`ANTHROPIC_API_KEY`. Without it, everything else works and nameplate fields
+are typed by hand.
+
 ## Design notes
 
 The palette is taken from the refrigeration manifold gauge set: the low-side

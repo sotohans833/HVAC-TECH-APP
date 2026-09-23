@@ -3,14 +3,19 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import {
   createJob,
   db,
+  deleteEquipment,
   deleteJob,
   findOpenDraft,
+  getEquipment,
   getJob,
   jobPartCount,
+  listEquipment,
   listJobs,
+  saveEquipment,
   saveJob,
   type Job,
 } from './db';
+import { createEquipment } from './equipment';
 
 async function seed(overrides: Partial<Job> = {}): Promise<Job> {
   const job = { ...createJob(), ...overrides };
@@ -103,5 +108,42 @@ describe('jobPartCount', () => {
       ],
     };
     expect(jobPartCount(job)).toBe(4);
+  });
+});
+
+describe('equipment storage', () => {
+  beforeEach(async () => {
+    await db().equipment.clear();
+  });
+
+  it('round-trips a piece of equipment', async () => {
+    const unit = {
+      ...createEquipment('414 Willow Bend'),
+      floor: '2nd-floor' as const,
+      type: 'furnace' as const,
+      manufacturer: 'Lennox',
+      model: 'EL296UH070XV36B-02',
+      serial: '5912E21686',
+      memo: '3rd floor attic walk in',
+    };
+    await saveEquipment(unit);
+
+    const stored = await getEquipment(unit.id);
+    expect(stored?.serial).toBe('5912E21686');
+    expect(stored?.floor).toBe('2nd-floor');
+  });
+
+  it('lists equipment newest first and deletes it', async () => {
+    const older = createEquipment('A');
+    const newer = createEquipment('B');
+    await saveEquipment(older);
+    await saveEquipment(newer);
+    await db().equipment.update(older.id, { updatedAt: 1_000 });
+    await db().equipment.update(newer.id, { updatedAt: 2_000 });
+
+    expect((await listEquipment()).map((unit) => unit.customer)).toEqual(['B', 'A']);
+
+    await deleteEquipment(older.id);
+    expect(await listEquipment()).toHaveLength(1);
   });
 });

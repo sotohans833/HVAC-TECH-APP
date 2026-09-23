@@ -67,7 +67,8 @@
   "nav": {
     "label": "Sections",
     "builder": "Work order",
-    "jobs": "History"
+    "jobs": "History",
+    "equipment": "Equipment"
   },
   "jobs": {
     "eyebrow": "Recent work",
@@ -80,5 +81,56 @@
       "draft": "In progress",
       "completed": "Finished"
     }
+  },
+  "equipment": {
+    "eyebrow": "Customer equipment",
+    "heading": "Photograph the nameplate",
+    "subheading": "Take a photo of the data plate and the numbers fill themselves in. Check them, pick the floor and save; then copy it into ServiceTitan field by field.",
+    "customerLabel": "Customer",
+    "customerPlaceholder": "Name or address",
+    "takePhoto": "Photograph nameplate",
+    "withoutPhoto": "Add without a photo",
+    "photoAlt": "Nameplate photo",
+    "retake": "New photo",
+    "readAgain": "Read plate again",
+    "scan": {
+      "reading": "Reading the nameplate…",
+      "done": "Done. Check the fields before saving.",
+      "doneUncertain": "Done. Check the highlighted fields — they were hard to read.",
+      "offline": "No signal. The photo is saved; fill the fields by hand or read it later.",
+      "failed": "Couldn't read the nameplate. Fill the fields by hand or try another photo.",
+      "unreadable": "The photo can't be read. Try closer, with light and no glare.",
+      "notConfigured": "Automatic reading isn't set up (API key missing). Fill the fields by hand.",
+      "busy": "The service is busy. Try again in a moment."
+    },
+    "fields": {
+      "floor": "Floor / zone",
+      "floorPlaceholder": "Which floor does it serve?",
+      "type": "Equipment type",
+      "typePlaceholder": "Pick the type",
+      "manufacturer": "Manufacturer",
+      "model": "Model number",
+      "serial": "Serial number",
+      "manufactured": "Manufactured (YYYY-MM)",
+      "memo": "Memo — where it is",
+      "memoPlaceholder": "e.g. Attic, Right side"
+    },
+    "verify": "Check",
+    "useDecoded": "Use {date} (from the serial number)",
+    "namePreview": "Name in ServiceTitan",
+    "noName": "Pick floor and type",
+    "save": "Save equipment",
+    "cancel": "Cancel",
+    "listHeading": "Saved equipment",
+    "empty": "No equipment yet. Photograph a nameplate to start; it saves on the phone even without signal.",
+    "noCustomer": "No customer",
+    "age": "{years, plural, =0 {under a year} one {# year} other {# years}}",
+    "copy": "Copy {field}",
+    "copied": "Copied",
+    "edit": "Edit",
+    "delete": "Delete {name}",
+    "enteredInServiceTitan": "Entered in ServiceTitan",
+    "pending": "Not in ServiceTitan yet",
+    "count": "{count, plural, one {# unit} other {# units}}"
   }
 }

@@ -115,3 +115,20 @@
   background: var(--mf-surface-2);
   color: var(--mf-text);
 }
+
+/* On a phone the nav does not fit beside the brand and controls, so it drops
+   to its own row instead of pushing the bar wider than the screen. */
+@media (max-width: 640px) {
+  .app-bar {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+  .brand {
+    margin-right: auto;
+  }
+  .app-nav {
+    order: 1;
+    width: 100%;
+    margin-right: 0;
+  }
+}

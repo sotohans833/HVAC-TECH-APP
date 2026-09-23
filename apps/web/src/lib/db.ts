@@ -1,4 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie';
+import type { Equipment } from './equipment';
 import type { CallType, LineItem } from './invoice';
 import type { MaintenanceScope } from './procedures';
 
@@ -29,12 +30,19 @@ export interface Job {
 
 class ManifoldDatabase extends Dexie {
   jobs!: EntityTable<Job, 'id'>;
+  equipment!: EntityTable<Equipment, 'id'>;
 
   constructor() {
     super('manifold');
     // `status` and `updatedAt` are indexed because every query is either "the
     // open draft" or "recent work, newest first".
     this.version(1).stores({ jobs: 'id, status, updatedAt' });
+    // Equipment is looked up by customer and listed newest first. Adding a
+    // table leaves existing jobs untouched, so no upgrade function is needed.
+    this.version(2).stores({
+      jobs: 'id, status, updatedAt',
+      equipment: 'id, customer, updatedAt',
+    });
   }
 }
 
@@ -103,4 +111,21 @@ export async function deleteJob(id: string): Promise<void> {
 /** Total pieces recorded on a job, for the history list. */
 export function jobPartCount(job: Job): number {
   return job.lines.reduce((total, line) => total + line.quantity, 0);
+}
+
+export async function saveEquipment(equipment: Equipment): Promise<void> {
+  await db().equipment.put({ ...equipment, updatedAt: Date.now() });
+}
+
+export async function getEquipment(id: string): Promise<Equipment | undefined> {
+  return db().equipment.get(id);
+}
+
+/** Most recently touched first, so what was just photographed is on top. */
+export async function listEquipment(limit = 300): Promise<Equipment[]> {
+  return db().equipment.orderBy('updatedAt').reverse().limit(limit).toArray();
+}
+
+export async function deleteEquipment(id: string): Promise<void> {
+  await db().equipment.delete(id);
 }

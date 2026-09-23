@@ -77,6 +77,13 @@ export function AppBar() {
         >
           {t('nav.jobs')}
         </Link>
+        <Link
+          href="/equipment"
+          className="nav-link"
+          aria-current={pathname === '/equipment' ? 'page' : undefined}
+        >
+          {t('nav.equipment')}
+        </Link>
       </nav>
 
       <Badge tone={online ? 'ok' : 'warn'} dot>

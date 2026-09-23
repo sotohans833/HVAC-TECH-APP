@@ -67,7 +67,8 @@
   "nav": {
     "label": "Secciones",
     "builder": "Trabajo",
-    "jobs": "Historial"
+    "jobs": "Historial",
+    "equipment": "Equipos"
   },
   "jobs": {
     "eyebrow": "Trabajos recientes",
@@ -80,5 +81,56 @@
       "draft": "En curso",
       "completed": "Terminado"
     }
+  },
+  "equipment": {
+    "eyebrow": "Equipos del cliente",
+    "heading": "Fotografía la placa",
+    "subheading": "Toma la foto de la placa de datos y los números se llenan solos. Revísalos, elige el piso y guárdalo; luego cópialo a ServiceTitan campo por campo.",
+    "customerLabel": "Cliente",
+    "customerPlaceholder": "Nombre o dirección",
+    "takePhoto": "Tomar foto de la placa",
+    "withoutPhoto": "Agregar sin foto",
+    "photoAlt": "Foto de la placa de datos",
+    "retake": "Otra foto",
+    "readAgain": "Leer placa otra vez",
+    "scan": {
+      "reading": "Leyendo la placa…",
+      "done": "Listo. Revisa los datos antes de guardar.",
+      "doneUncertain": "Listo. Revisa lo marcado: no se leía del todo claro.",
+      "offline": "Sin señal. La foto queda guardada; llena los datos a mano o léela después.",
+      "failed": "No se pudo leer la placa. Llena los datos a mano o intenta con otra foto.",
+      "unreadable": "La foto no se alcanza a leer. Intenta más cerca, con luz y sin reflejo.",
+      "notConfigured": "La lectura automática no está configurada (falta la clave de API). Llena los datos a mano.",
+      "busy": "El servicio está ocupado. Intenta de nuevo en un momento."
+    },
+    "fields": {
+      "floor": "Piso / zona",
+      "floorPlaceholder": "¿Qué piso atiende?",
+      "type": "Tipo de equipo",
+      "typePlaceholder": "Elige el tipo",
+      "manufacturer": "Fabricante",
+      "model": "Número de modelo",
+      "serial": "Número de serie",
+      "manufactured": "Fabricado (AAAA-MM)",
+      "memo": "Memo — dónde está",
+      "memoPlaceholder": "Ej. Attic, Right side"
+    },
+    "verify": "Verifica",
+    "useDecoded": "Usar {date} (según el número de serie)",
+    "namePreview": "Nombre en ServiceTitan",
+    "noName": "Elige piso y tipo",
+    "save": "Guardar equipo",
+    "cancel": "Cancelar",
+    "listHeading": "Equipos guardados",
+    "empty": "Todavía no hay equipos. Toma la foto de una placa para empezar; se guarda en el teléfono aunque estés sin señal.",
+    "noCustomer": "Sin cliente",
+    "age": "{years, plural, =0 {menos de un año} one {# año} other {# años}}",
+    "copy": "Copiar {field}",
+    "copied": "Copiado",
+    "edit": "Editar",
+    "delete": "Borrar {name}",
+    "enteredInServiceTitan": "Ya está en ServiceTitan",
+    "pending": "Falta pasar a ServiceTitan",
+    "count": "{count, plural, one {# equipo} other {# equipos}}"
   }
 }

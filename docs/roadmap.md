@@ -51,6 +51,17 @@ Verified in a real browser: filled a ticket, reloaded the page, and the customer
 equipment, quantities and selected cause all survived; finishing the job moved it
 into history.
 
+## Equipment capture — delivered
+
+- Equipos screen: photograph a nameplate, Claude reads manufacturer, model,
+  serial and type into a form the technician checks and saves (ADR 0007)
+- Name composed as ServiceTitan shows it ("2nd floor furnace"), memo shortcuts
+- Manufacture date decoded from the serial for Lennox, Goodman, Carrier, Trane
+- Saved on the device with the photo, works offline; per-field copy buttons and
+  an "entered in ServiceTitan" checkbox for moving it across by hand
+- Next: write to ServiceTitan's installed-equipment API from the 2b backend,
+  once the company approves an integration
+
 ## Phase 2b — next
 
 FastAPI, Pydantic schemas generating the front-end types, auth, and sync that
