@@ -14,6 +14,9 @@ const nextConfig: NextConfig = {
   // package-lock.json in the home directory), which it warns about on every
   // start and which throws off file tracing in the build.
   outputFileTracingRoot: path.join(import.meta.dirname, '../..'),
+  // Lets a phone on the same Wi-Fi load the dev server by the PC's LAN address
+  // (http://192.168.x.x:3000) to try the camera flow. Development only.
+  allowedDevOrigins: ['192.168.*.*', '10.*.*.*', '172.*.*.*', '*.local'],
 };
 
 export default withNextIntl(nextConfig);

@@ -12,6 +12,8 @@
  * office already uses there.
  */
 
+import { newId } from './id';
+
 /** A label in both languages, as in the part catalog. */
 export interface Bilingual {
   en: string;
@@ -127,7 +129,7 @@ export interface Equipment {
 export function createEquipment(customer = ''): Equipment {
   const now = Date.now();
   return {
-    id: crypto.randomUUID(),
+    id: newId(),
     createdAt: now,
     updatedAt: now,
     customer,

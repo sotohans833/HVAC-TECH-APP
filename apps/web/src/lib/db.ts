@@ -1,5 +1,6 @@
 import Dexie, { type EntityTable } from 'dexie';
 import type { Equipment } from './equipment';
+import { newId } from './id';
 import type { CallType, LineItem } from './invoice';
 import type { MaintenanceScope } from './procedures';
 
@@ -67,7 +68,7 @@ export function resetDbForTests(): void {
 export function createJob(): Job {
   const now = Date.now();
   return {
-    id: crypto.randomUUID(),
+    id: newId(),
     createdAt: now,
     updatedAt: now,
     status: 'draft',
