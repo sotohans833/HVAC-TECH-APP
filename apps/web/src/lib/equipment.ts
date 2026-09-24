@@ -274,3 +274,35 @@ export function ageInYears(manufactured: string, now: Date = new Date()): number
   if (now.getMonth() + 1 < month) age -= 1;
   return Math.max(0, age);
 }
+
+/**
+ * The memo as comma-separated parts: "Attic, right side". Shortcuts are parts,
+ * and anything the technician typed stays as its own part.
+ */
+function memoParts(memo: string): string[] {
+  return memo
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
+function sameWords(a: string, b: string): boolean {
+  return a.toLowerCase() === b.toLowerCase();
+}
+
+/** Whether a shortcut is already in the memo, so its chip can show as on. */
+export function memoHasShortcut(memo: string, shortcut: string): boolean {
+  return memoParts(memo).some((part) => sameWords(part, shortcut));
+}
+
+/**
+ * Tapping a shortcut adds it, and tapping it again takes it back out. A
+ * mistaken tap is undone with the same thumb, and repeated taps can never pile
+ * up "Roof roof roof".
+ */
+export function toggleMemoShortcut(memo: string, shortcut: string): string {
+  const parts = memoParts(memo);
+  const without = parts.filter((part) => !sameWords(part, shortcut));
+  if (without.length !== parts.length) return without.join(', ');
+  return [...parts, parts.length === 0 ? shortcut : shortcut.toLowerCase()].join(', ');
+}

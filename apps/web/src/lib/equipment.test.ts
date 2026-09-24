@@ -4,7 +4,9 @@ import {
   composeEquipmentName,
   decodeSerial,
   decodedToMonth,
+  memoHasShortcut,
   normalizeIdentifier,
+  toggleMemoShortcut,
 } from './equipment';
 
 const NOW = new Date(2026, 8, 23);
@@ -94,5 +96,35 @@ describe('ageInYears', () => {
   it('returns null for anything that is not a date', () => {
     expect(ageInYears('', NOW)).toBeNull();
     expect(ageInYears('May 2012', NOW)).toBeNull();
+  });
+});
+
+describe('memo shortcuts', () => {
+  it('adds a shortcut, capitalized only when it starts the memo', () => {
+    expect(toggleMemoShortcut('', 'Attic')).toBe('Attic');
+    expect(toggleMemoShortcut('Attic', 'Right side')).toBe('Attic, right side');
+  });
+
+  it('takes a shortcut back out when tapped again', () => {
+    expect(toggleMemoShortcut('Attic, right side', 'Right side')).toBe('Attic');
+    expect(toggleMemoShortcut('Attic', 'Attic')).toBe('');
+  });
+
+  it('never repeats a shortcut however many times it is tapped', () => {
+    let memo = '';
+    for (let tap = 0; tap < 5; tap++) memo = toggleMemoShortcut(memo, 'Roof');
+    expect(memo).toBe('Roof');
+  });
+
+  it('keeps what the technician typed', () => {
+    expect(toggleMemoShortcut('3rd floor walk in', 'Attic')).toBe('3rd floor walk in, attic');
+    expect(toggleMemoShortcut('3rd floor walk in, attic', 'Attic')).toBe('3rd floor walk in');
+  });
+
+  it('knows which shortcuts are on, ignoring case', () => {
+    expect(memoHasShortcut('Attic, right side', 'Right side')).toBe(true);
+    expect(memoHasShortcut('Attic, right side', 'Roof')).toBe(false);
+    // Part of a longer phrase, not the shortcut itself.
+    expect(memoHasShortcut('3rd floor attic walk in', 'Attic')).toBe(false);
   });
 });

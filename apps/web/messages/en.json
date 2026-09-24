@@ -131,6 +131,9 @@
     "delete": "Delete {name}",
     "enteredInServiceTitan": "Entered in ServiceTitan",
     "pending": "Not in ServiceTitan yet",
-    "count": "{count, plural, one {# unit} other {# units}}"
+    "count": "{count, plural, one {# unit} other {# units}}",
+    "fromGallery": "Upload from gallery",
+    "fromGalleryShort": "Gallery",
+    "clearMemo": "Clear memo"
   }
 }

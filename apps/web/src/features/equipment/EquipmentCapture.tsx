@@ -3,7 +3,16 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useTranslations } from 'next-intl';
-import { Badge, Button, CheckIcon, CopyIcon, Panel, Select, TrashIcon } from '@manifold/ui';
+import {
+  Badge,
+  Button,
+  CheckIcon,
+  CloseIcon,
+  CopyIcon,
+  Panel,
+  Select,
+  TrashIcon,
+} from '@manifold/ui';
 import { deleteEquipment, findOpenDraft, listEquipment, saveEquipment } from '@/lib/db';
 import {
   EQUIPMENT_FLOORS,
@@ -11,6 +20,8 @@ import {
   EQUIPMENT_TYPES,
   EQUIPMENT_TYPE_LABELS,
   MEMO_SHORTCUTS,
+  memoHasShortcut,
+  toggleMemoShortcut,
   ageInYears,
   composeEquipmentName,
   createEquipment,
@@ -68,7 +79,8 @@ export function EquipmentCapture({ locale }: { locale: Locale }) {
   const [scan, setScan] = useState<ScanState>('idle');
   const [uncertain, setUncertain] = useState<NameplateField[]>([]);
   const [copied, setCopied] = useState<string | null>(null);
-  const fileInput = useRef<HTMLInputElement>(null);
+  const cameraInput = useRef<HTMLInputElement>(null);
+  const galleryInput = useRef<HTMLInputElement>(null);
   const scanRun = useRef(0);
 
   const units = useLiveQuery(() => listEquipment(), []);
@@ -270,9 +282,11 @@ export function EquipmentCapture({ locale }: { locale: Locale }) {
         />
       </div>
 
-      {/* The native picker: on a phone, `capture` opens the rear camera directly. */}
+      {/* Two native pickers: with `capture` a phone opens the rear camera
+          directly; without it, the photo library, for a plate photographed
+          earlier or sent by a coworker. */}
       <input
-        ref={fileInput}
+        ref={cameraInput}
         type="file"
         accept="image/*"
         capture="environment"
@@ -282,11 +296,28 @@ export function EquipmentCapture({ locale }: { locale: Locale }) {
           event.target.value = '';
         }}
       />
+      <input
+        ref={galleryInput}
+        type="file"
+        accept="image/*"
+        className={styles.hiddenInput}
+        onChange={(event) => {
+          void onPhoto(event.target.files?.[0]);
+          event.target.value = '';
+        }}
+      />
 
       {draft === null ? (
         <div className={styles.start}>
-          <Button onClick={() => fileInput.current?.click()} className={styles.camera}>
+          <Button onClick={() => cameraInput.current?.click()} className={styles.camera}>
             {t('takePhoto')}
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => galleryInput.current?.click()}
+            className={styles.camera}
+          >
+            {t('fromGallery')}
           </Button>
           <Button variant="ghost" onClick={startWithoutPhoto}>
             {t('withoutPhoto')}
@@ -304,9 +335,16 @@ export function EquipmentCapture({ locale }: { locale: Locale }) {
                 <Button
                   size="sm"
                   variant="secondary"
-                  onClick={() => fileInput.current?.click()}
+                  onClick={() => cameraInput.current?.click()}
                 >
                   {t('retake')}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => galleryInput.current?.click()}
+                >
+                  {t('fromGalleryShort')}
                 </Button>
                 {draft.photo && scan !== 'reading' ? (
                   <Button
@@ -429,31 +467,46 @@ export function EquipmentCapture({ locale }: { locale: Locale }) {
                 <label className={styles.fieldLabel} htmlFor="equipment-memo">
                   {t('fields.memo')}
                 </label>
-                <input
-                  id="equipment-memo"
-                  className={styles.input}
-                  value={draft.memo}
-                  onChange={(event) => update({ memo: event.target.value })}
-                  placeholder={t('fields.memoPlaceholder')}
-                  autoComplete="off"
-                />
-                <div className={styles.chips}>
-                  {MEMO_SHORTCUTS.map((shortcut) => (
+                <div className={styles.inputWithClear}>
+                  <input
+                    id="equipment-memo"
+                    className={styles.input}
+                    value={draft.memo}
+                    onChange={(event) => update({ memo: event.target.value })}
+                    placeholder={t('fields.memoPlaceholder')}
+                    autoComplete="off"
+                  />
+                  {draft.memo !== '' ? (
                     <button
-                      key={shortcut}
                       type="button"
-                      className={styles.chip}
-                      onClick={() =>
-                        update({
-                          memo: draft.memo.trim()
-                            ? `${draft.memo.trim()} ${shortcut.toLowerCase()}`
-                            : shortcut,
-                        })
-                      }
+                      className={styles.clear}
+                      onClick={() => update({ memo: '' })}
+                      aria-label={t('clearMemo')}
                     >
-                      {shortcut}
+                      <CloseIcon size={16} />
                     </button>
-                  ))}
+                  ) : null}
+                </div>
+                <div className={styles.chips}>
+                  {MEMO_SHORTCUTS.map((shortcut) => {
+                    const on = memoHasShortcut(draft.memo, shortcut);
+                    return (
+                      <button
+                        key={shortcut}
+                        type="button"
+                        className={[styles.chip, on ? styles.chipOn : null]
+                          .filter(Boolean)
+                          .join(' ')}
+                        aria-pressed={on}
+                        onClick={() =>
+                          update({ memo: toggleMemoShortcut(draft.memo, shortcut) })
+                        }
+                      >
+                        {on ? <CheckIcon size={14} /> : null}
+                        {shortcut}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 

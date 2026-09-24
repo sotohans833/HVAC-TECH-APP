@@ -131,6 +131,9 @@
     "delete": "Borrar {name}",
     "enteredInServiceTitan": "Ya está en ServiceTitan",
     "pending": "Falta pasar a ServiceTitan",
-    "count": "{count, plural, one {# equipo} other {# equipos}}"
+    "count": "{count, plural, one {# equipo} other {# equipos}}",
+    "fromGallery": "Subir de la galería",
+    "fromGalleryShort": "Galería",
+    "clearMemo": "Borrar memo"
   }
 }

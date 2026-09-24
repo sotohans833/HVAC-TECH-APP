@@ -236,7 +236,10 @@
 }
 
 .chip {
-  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 40px;
   padding: 0 12px;
   border: 1px solid var(--mf-border);
   border-radius: var(--mf-r-full);
@@ -445,4 +448,40 @@
 
 .loading {
   min-height: 180px;
+}
+
+/* A shortcut already in the memo; tapping it again takes it out. */
+.chipOn {
+  border-color: var(--mf-low);
+  background: var(--mf-low-soft);
+  color: var(--mf-text);
+}
+
+.inputWithClear {
+  position: relative;
+}
+.inputWithClear .input {
+  padding-right: 48px;
+}
+
+.clear {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: var(--mf-r-md);
+  background: none;
+  color: var(--mf-text-3);
+  cursor: pointer;
+}
+@media (hover: hover) {
+  .clear:hover {
+    background: var(--mf-surface-2);
+    color: var(--mf-text);
+  }
 }
