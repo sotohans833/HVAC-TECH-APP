@@ -124,6 +124,14 @@ export interface Equipment {
   photo?: Blob | undefined;
   /** When the technician marked it as entered in ServiceTitan. */
   enteredInServiceTitanAt?: number | undefined;
+  /** The ServiceTitan job this was captured on, as the technician typed it. */
+  jobNumber?: string | undefined;
+  /** The ServiceTitan location the job is at. */
+  serviceTitanLocationId?: number | undefined;
+  /** The installed-equipment record this was sent to, once it has been. */
+  serviceTitanEquipmentId?: number | undefined;
+  /** Who captured it, for the record ServiceTitan attributes to the app. */
+  capturedBy?: string | undefined;
 }
 
 export function createEquipment(customer = ''): Equipment {

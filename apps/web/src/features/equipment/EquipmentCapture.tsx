@@ -33,6 +33,12 @@ import {
   type EquipmentType,
 } from '@/lib/equipment';
 import type { NameplateField, NameplateReading } from '@/lib/nameplate';
+import type { JobLookup } from '@/lib/servicetitan/types';
+import { fetchApi } from '@/features/auth/fetchApi';
+import { useTechnician } from '@/features/auth/useTechnician';
+import { JobLookupPanel } from './JobLookupPanel';
+import { SendToServiceTitan } from './SendToServiceTitan';
+import { useServiceTitanMode } from './useServiceTitanMode';
 import type { Locale } from '@/i18n/routing';
 import { blobToBase64, downscalePhoto } from './photo';
 import styles from './EquipmentCapture.module.css';
@@ -79,6 +85,11 @@ export function EquipmentCapture({ locale }: { locale: Locale }) {
   const [scan, setScan] = useState<ScanState>('idle');
   const [uncertain, setUncertain] = useState<NameplateField[]>([]);
   const [copied, setCopied] = useState<string | null>(null);
+  const [job, setJob] = useState<JobLookup | null>(null);
+  const [sendingId, setSendingId] = useState<string | null>(null);
+  const technician = useTechnician();
+  const serviceTitan = useServiceTitanMode();
+  const connected = serviceTitan !== null && serviceTitan !== 'off';
   const cameraInput = useRef<HTMLInputElement>(null);
   const galleryInput = useRef<HTMLInputElement>(null);
   const scanRun = useRef(0);
@@ -113,6 +124,39 @@ export function EquipmentCapture({ locale }: { locale: Locale }) {
     return match ? monthFormat.format(new Date(Number(match[1]), Number(match[2]) - 1)) : value;
   }
 
+  /** A new record, tied to the job looked up, if there is one. */
+  function newDraft(): Equipment {
+    return {
+      ...createEquipment(customer),
+      jobNumber: job?.job.number,
+      serviceTitanLocationId: job?.location.id,
+    };
+  }
+
+  function onJobFound(found: JobLookup) {
+    setJob(found);
+    const label = [found.customerName ?? found.location.name, found.location.address]
+      .filter(Boolean)
+      .join(' — ');
+    setCustomer(label);
+    if (draft) {
+      update({
+        customer: label,
+        jobNumber: found.job.number,
+        serviceTitanLocationId: found.location.id,
+      });
+    }
+  }
+
+  async function markSent(unit: Equipment, equipmentId: number, locationId: number) {
+    await saveEquipment({
+      ...unit,
+      enteredInServiceTitanAt: Date.now(),
+      serviceTitanEquipmentId: equipmentId,
+      serviceTitanLocationId: locationId,
+    });
+  }
+
   function update(patch: Partial<Equipment>) {
     setDraft((current) => (current ? { ...current, ...patch } : current));
     // A field the technician has touched is theirs now, not the model's guess.
@@ -127,7 +171,7 @@ export function EquipmentCapture({ locale }: { locale: Locale }) {
     }
     setScan('reading');
     try {
-      const response = await fetch('/api/equipment/scan', {
+      const response = await fetchApi('/api/equipment/scan', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ image: await blobToBase64(photo), mediaType: photo.type }),
@@ -156,13 +200,13 @@ export function EquipmentCapture({ locale }: { locale: Locale }) {
       // An image the browser cannot decode (some HEIC files) still gets saved
       // and sent as is; the reading may fail but the photo is not lost.
     }
-    setDraft((current) => ({ ...(current ?? createEquipment(customer)), photo }));
+    setDraft((current) => ({ ...(current ?? newDraft()), photo }));
     setUncertain([]);
     void readPlate(photo);
   }
 
   function startWithoutPhoto() {
-    setDraft(createEquipment(customer));
+    setDraft(newDraft());
     setScan('idle');
     setUncertain([]);
   }
@@ -180,6 +224,7 @@ export function EquipmentCapture({ locale }: { locale: Locale }) {
       await saveEquipment({
         ...draft,
         customer: draft.customer.trim(),
+        capturedBy: draft.capturedBy ?? technician?.name,
         model: normalizeIdentifier(draft.model),
         serial: normalizeIdentifier(draft.serial),
       });
@@ -262,6 +307,17 @@ export function EquipmentCapture({ locale }: { locale: Locale }) {
         <h1 className={styles.heading}>{t('heading')}</h1>
         <p className={styles.subheading}>{t('subheading')}</p>
       </header>
+
+      {connected ? (
+        <div className={styles.jobSection}>
+          <JobLookupPanel
+            mode={serviceTitan}
+            job={job}
+            onFound={onJobFound}
+            onClear={() => setJob(null)}
+          />
+        </div>
+      ) : null}
 
       <div className={styles.field}>
         <label className={styles.fieldLabel} htmlFor="equipment-customer">
@@ -564,6 +620,16 @@ export function EquipmentCapture({ locale }: { locale: Locale }) {
                           </span>
                         ) : null}
                       </div>
+                      {unit.jobNumber || unit.capturedBy ? (
+                        <p className={styles.cardMeta}>
+                          {[
+                            unit.jobNumber ? t('jobMeta', { number: unit.jobNumber }) : null,
+                            unit.capturedBy ? t('capturedBy', { name: unit.capturedBy }) : null,
+                          ]
+                            .filter(Boolean)
+                            .join(' · ')}
+                        </p>
+                      ) : null}
                       <dl className={styles.facts}>
                         {facts.map(([key, label, value]) =>
                           value === '' ? null : (
@@ -597,6 +663,14 @@ export function EquipmentCapture({ locale }: { locale: Locale }) {
                           </Badge>
                         ) : null}
                         <span className={styles.spacer} />
+                        {connected && unit.jobNumber ? (
+                          <Button
+                            size="sm"
+                            onClick={() => setSendingId(sendingId === unit.id ? null : unit.id)}
+                          >
+                            {t('sendToServiceTitan')}
+                          </Button>
+                        ) : null}
                         <Button size="sm" variant="secondary" onClick={() => edit(unit)}>
                           {t('edit')}
                         </Button>
@@ -609,6 +683,15 @@ export function EquipmentCapture({ locale }: { locale: Locale }) {
                           <TrashIcon size={17} />
                         </button>
                       </div>
+                      {sendingId === unit.id ? (
+                        <SendToServiceTitan
+                          unit={unit}
+                          onSent={({ equipmentId, locationId }) =>
+                            void markSent(unit, equipmentId, locationId)
+                          }
+                          onClose={() => setSendingId(null)}
+                        />
+                      ) : null}
                     </li>
                   );
                 })}

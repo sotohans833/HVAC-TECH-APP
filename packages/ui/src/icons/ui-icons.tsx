@@ -84,3 +84,10 @@ export const OfflineIcon = (p: UiIconProps) => (
     <path d="M12 19.6h.01" />
   </IconBase>
 );
+
+export const LogOutIcon = (p: UiIconProps) => (
+  <IconBase {...p}>
+    <path d="M9.5 20.5H6a1.5 1.5 0 0 1-1.5-1.5V5A1.5 1.5 0 0 1 6 3.5h3.5" />
+    <path d="M15.5 16.5 20 12l-4.5-4.5M20 12H9.5" />
+  </IconBase>
+);

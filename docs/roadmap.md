@@ -62,6 +62,16 @@ into history.
 - Next: write to ServiceTitan's installed-equipment API from the 2b backend,
   once the company approves an integration
 
+## Technician logins and ServiceTitan — built, awaiting credentials
+
+- Username + PIN per technician, managed with `pnpm tech`; 30-day sessions;
+  every page and API route protected (ADR 0008)
+- Job lookup by number; review screen showing each change before sending;
+  create or update installed equipment, never delete; memo appended to
+- Demo mode (`ST_MODE=mock`) until the company's credentials are issued
+- Next: verify against the real API, then host the app over HTTPS so
+  technicians can use it in the field
+
 ## Phase 2b — next
 
 FastAPI, Pydantic schemas generating the front-end types, auth, and sync that

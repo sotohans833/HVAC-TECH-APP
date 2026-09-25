@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { Badge, GlobeIcon, MoonIcon, SunIcon } from '@manifold/ui';
+import { Badge, GlobeIcon, LogOutIcon, MoonIcon, SunIcon } from '@manifold/ui';
 import { Link, usePathname, useRouter } from '@/i18n/navigation';
 import { routing, type Locale } from '@/i18n/routing';
+import { forgetTechnician, useTechnician } from '@/features/auth/useTechnician';
 
 type Theme = 'light' | 'dark';
 
@@ -16,6 +17,8 @@ export function AppBar() {
 
   const [theme, setTheme] = useState<Theme>('dark');
   const [online, setOnline] = useState(true);
+  const technician = useTechnician();
+  const onLogin = pathname === '/login';
 
   // Read the theme the inline script already applied, rather than assuming one.
   useEffect(() => {
@@ -46,6 +49,13 @@ export function AppBar() {
     }
   }
 
+  async function signOut() {
+    await fetch('/api/auth/logout', { method: 'POST' }).catch(() => undefined);
+    forgetTechnician();
+    router.replace('/login');
+    router.refresh();
+  }
+
   function switchLocale() {
     const next =
       routing.locales.find((candidate) => candidate !== locale) ?? routing.defaultLocale;
@@ -62,29 +72,33 @@ export function AppBar() {
         <span className="brand-name">{t('app.name')}</span>
       </div>
 
-      <nav className="app-nav" aria-label={t('nav.label')}>
-        <Link
-          href="/"
-          className="nav-link"
-          aria-current={pathname === '/' ? 'page' : undefined}
-        >
-          {t('nav.builder')}
-        </Link>
-        <Link
-          href="/jobs"
-          className="nav-link"
-          aria-current={pathname === '/jobs' ? 'page' : undefined}
-        >
-          {t('nav.jobs')}
-        </Link>
-        <Link
-          href="/equipment"
-          className="nav-link"
-          aria-current={pathname === '/equipment' ? 'page' : undefined}
-        >
-          {t('nav.equipment')}
-        </Link>
-      </nav>
+      {onLogin ? (
+        <span className="app-nav" />
+      ) : (
+        <nav className="app-nav" aria-label={t('nav.label')}>
+          <Link
+            href="/"
+            className="nav-link"
+            aria-current={pathname === '/' ? 'page' : undefined}
+          >
+            {t('nav.builder')}
+          </Link>
+          <Link
+            href="/jobs"
+            className="nav-link"
+            aria-current={pathname === '/jobs' ? 'page' : undefined}
+          >
+            {t('nav.jobs')}
+          </Link>
+          <Link
+            href="/equipment"
+            className="nav-link"
+            aria-current={pathname === '/equipment' ? 'page' : undefined}
+          >
+            {t('nav.equipment')}
+          </Link>
+        </nav>
+      )}
 
       <Badge tone={online ? 'ok' : 'warn'} dot>
         {online ? t('status.local') : t('status.offline')}
@@ -98,6 +112,26 @@ export function AppBar() {
       >
         <GlobeIcon size={19} />
       </button>
+
+      {technician && !onLogin ? (
+        <button
+          type="button"
+          className="icon-button tech-button"
+          onClick={() => void signOut()}
+          aria-label={t('auth.signOut', { name: technician.name })}
+          title={t('auth.signOut', { name: technician.name })}
+        >
+          <span className="tech-initials" aria-hidden="true">
+            {technician.name
+              .split(' ')
+              .map((word) => word.charAt(0))
+              .join('')
+              .slice(0, 2)
+              .toUpperCase()}
+          </span>
+          <LogOutIcon size={17} />
+        </button>
+      ) : null}
 
       <button
         type="button"

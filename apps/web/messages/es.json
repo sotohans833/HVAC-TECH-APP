@@ -134,6 +134,73 @@
     "count": "{count, plural, one {# equipo} other {# equipos}}",
     "fromGallery": "Subir de la galería",
     "fromGalleryShort": "Galería",
-    "clearMemo": "Borrar memo"
+    "clearMemo": "Borrar memo",
+    "jobMeta": "Trabajo #{number}",
+    "capturedBy": "por {name}",
+    "sendToServiceTitan": "Enviar a ServiceTitan"
+  },
+  "login": {
+    "eyebrow": "Manifold",
+    "heading": "Entrar",
+    "user": "Usuario",
+    "pin": "PIN (6 dígitos)",
+    "signIn": "Entrar",
+    "signingIn": "Entrando…",
+    "hint": "Tu usuario y PIN te los da quien administra la app. La sesión dura 30 días en este teléfono.",
+    "notConfigured": "Todavía no hay técnicos. En la PC donde corre la app, agrega el primero con este comando y usa el usuario y PIN que te muestre:",
+    "errors": {
+      "invalid": "Usuario o PIN incorrecto.",
+      "locked": "Demasiados intentos. Espera 15 minutos o pide un PIN nuevo.",
+      "failed": "No se pudo conectar. Revisa la señal e intenta otra vez."
+    }
+  },
+  "auth": {
+    "signOut": "Cerrar sesión de {name}"
+  },
+  "servicetitan": {
+    "jobLabel": "Número de trabajo",
+    "jobPlaceholder": "Ej. 4521",
+    "jobHint": "Busca el trabajo para ver los equipos que ServiceTitan ya tiene en esa casa.",
+    "demo": "DEMO",
+    "demoHint": "Modo demo: prueba con el trabajo 75907463. Nada se envía al ServiceTitan real.",
+    "search": "Buscar",
+    "searching": "Buscando…",
+    "notFound": "No se encontró ese trabajo. Revisa el número.",
+    "job": "Trabajo #{number}",
+    "changeJob": "Cambiar de trabajo",
+    "existing": "{count, plural, =0 {Sin equipos en ServiceTitan} one {# equipo en ServiceTitan} other {# equipos en ServiceTitan}}",
+    "unnamed": "(sin nombre)",
+    "sendHeading": "Enviar a ServiceTitan",
+    "loading": "Buscando el trabajo en ServiceTitan…",
+    "target": "Guardar en",
+    "updateOption": "Actualizar: {name} ({serial})",
+    "createOption": "Crear equipo nuevo",
+    "noChanges": "ServiceTitan ya tiene estos datos. No hay nada que cambiar.",
+    "markDone": "Marcar como listo",
+    "empty": "(vacío)",
+    "confirmUpdate": "{count, plural, one {Enviar # cambio} other {Enviar # cambios}}",
+    "confirmCreate": "Crear en ServiceTitan",
+    "sending": "Enviando…",
+    "sentUpdated": "Listo: actualizado en ServiceTitan.",
+    "sentCreated": "Listo: creado en ServiceTitan.",
+    "marked": "Marcado como listo.",
+    "close": "Cerrar",
+    "cancel": "Cancelar",
+    "fields": {
+      "name": "Nombre",
+      "serialNumber": "Número de serie",
+      "model": "Número de modelo",
+      "manufacturer": "Fabricante",
+      "memo": "Memo"
+    },
+    "errors": {
+      "off": "ServiceTitan no está conectado todavía.",
+      "auth": "Las credenciales de ServiceTitan no funcionan. Avisa a quien administra la app.",
+      "forbidden": "La integración no tiene permiso para esto en ServiceTitan. Hay que revisar los permisos (scopes) de la app.",
+      "invalid": "ServiceTitan rechazó los datos. Revisa los campos.",
+      "not-found": "No se encontró en ServiceTitan.",
+      "upstream": "No se pudo conectar con ServiceTitan. Intenta otra vez.",
+      "offline": "Sin señal. Busca el trabajo cuando tengas conexión."
+    }
   }
 }

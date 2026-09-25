@@ -50,6 +50,27 @@ server. Copy `apps/web/.env.example` to `apps/web/.env.local` and set
 `ANTHROPIC_API_KEY`. Without it, everything else works and nameplate fields
 are typed by hand.
 
+### Technician logins
+
+Every screen requires a login. Add technicians from the repo root:
+
+```bash
+pnpm tech add Juan Perez      # prints the username and a PIN, once
+pnpm tech list
+pnpm tech reset-pin juan-perez
+pnpm tech remove juan-perez
+```
+
+With `pnpm dev` (the `hvac` command) changes apply immediately. A production
+server reads them at startup, so restart or redeploy it after a change.
+
+### ServiceTitan
+
+Set `ST_TENANT_ID`, `ST_APP_KEY`, `ST_CLIENT_ID` and `ST_CLIENT_SECRET` in
+`apps/web/.env.local` to look up jobs and send equipment. To try the flow
+without credentials, set `ST_MODE=mock` and search for job `75907463`. See
+[ADR 0008](docs/adr/0008-technician-logins-and-servicetitan-writes.md).
+
 ## Design notes
 
 The palette is taken from the refrigeration manifold gauge set: the low-side

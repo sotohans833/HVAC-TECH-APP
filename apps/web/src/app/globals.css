@@ -132,3 +132,19 @@
     margin-right: 0;
   }
 }
+
+/* Who is signed in, as initials beside the sign-out arrow. */
+.icon-button.tech-button {
+  width: auto;
+  gap: 6px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+}
+.tech-initials {
+  font-family: var(--mf-font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--mf-text);
+}

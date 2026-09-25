@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "pnpm --filter @manifold/web dev",
     "build": "pnpm --filter @manifold/web build",
+    "tech": "pnpm --silent --filter @manifold/web tech",
     "typecheck": "pnpm -r typecheck",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test",

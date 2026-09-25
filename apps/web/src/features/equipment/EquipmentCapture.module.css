@@ -485,3 +485,155 @@
     color: var(--mf-text);
   }
 }
+
+/* ServiceTitan job lookup */
+.jobSection {
+  margin-bottom: 18px;
+}
+
+.searchRow {
+  display: flex;
+  gap: 8px;
+}
+.searchRow .input {
+  flex: 1;
+  min-width: 0;
+}
+
+.hintText {
+  margin: 0;
+  color: var(--mf-text-3);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.jobCard {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--mf-border);
+  border-left: 3px solid var(--mf-low);
+  border-radius: var(--mf-r-md);
+  background: var(--mf-surface);
+}
+
+.jobCardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.jobCardTop .clear {
+  position: static;
+  transform: none;
+}
+
+.jobName {
+  font-family: var(--mf-font-cond);
+  font-size: 1.125rem;
+}
+
+.jobAddress {
+  color: var(--mf-text-2);
+  font-size: 0.9375rem;
+}
+
+.jobEquipment {
+  margin-top: 6px;
+  font-size: 0.9375rem;
+}
+.jobEquipment summary {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  color: var(--mf-low);
+  cursor: pointer;
+}
+.jobEquipment ul {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+.jobEquipment li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: var(--mf-font-mono);
+  font-size: 0.8125rem;
+}
+
+.cardMeta {
+  margin: -4px 0 0;
+  font-family: var(--mf-font-mono);
+  font-size: 0.75rem;
+  color: var(--mf-text-3);
+}
+
+/* The review step before writing to ServiceTitan */
+.sendPanel {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--mf-low);
+  border-radius: var(--mf-r-md);
+  background: var(--mf-low-soft);
+}
+
+.sendHeader {
+  display: grid;
+  gap: 2px;
+}
+.sendHeader strong {
+  font-family: var(--mf-font-cond);
+  font-size: 1.0625rem;
+}
+.sendHeader .muted {
+  font-style: normal;
+  font-size: 0.875rem;
+}
+
+.changes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.change {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: start;
+  padding: 10px;
+  border-radius: var(--mf-r-md);
+  background: var(--mf-surface);
+  cursor: pointer;
+}
+.change input {
+  width: 22px;
+  height: 22px;
+  margin-top: 2px;
+  accent-color: var(--mf-low);
+}
+
+.changeBody {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.changeFrom {
+  color: var(--mf-text-3);
+  font-family: var(--mf-font-mono);
+  font-size: 0.8125rem;
+}
+
+.changeTo {
+  font-family: var(--mf-font-mono);
+  font-size: 0.9375rem;
+  color: var(--mf-text);
+}

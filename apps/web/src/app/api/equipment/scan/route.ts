@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { betaZodOutputFormat } from '@anthropic-ai/sdk/helpers/beta/zod';
+import { requireTechnician } from '@/lib/auth/request.server';
 import { NAMEPLATE_PROMPT, NameplateReadingSchema } from '@/lib/nameplate';
 
 /**
@@ -23,6 +24,9 @@ function error(code: string, status: number) {
 }
 
 export async function POST(request: Request) {
+  // Each reading costs money, so only signed-in technicians can make one.
+  const auth = await requireTechnician(request);
+  if ('response' in auth) return auth.response;
   if (!process.env.ANTHROPIC_API_KEY) return error('not-configured', 503);
 
   let body: unknown;

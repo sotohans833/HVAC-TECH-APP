@@ -134,6 +134,73 @@
     "count": "{count, plural, one {# unit} other {# units}}",
     "fromGallery": "Upload from gallery",
     "fromGalleryShort": "Gallery",
-    "clearMemo": "Clear memo"
+    "clearMemo": "Clear memo",
+    "jobMeta": "Job #{number}",
+    "capturedBy": "by {name}",
+    "sendToServiceTitan": "Send to ServiceTitan"
+  },
+  "login": {
+    "eyebrow": "Manifold",
+    "heading": "Sign in",
+    "user": "Username",
+    "pin": "PIN (6 digits)",
+    "signIn": "Sign in",
+    "signingIn": "Signing in…",
+    "hint": "Your username and PIN come from whoever manages the app. You stay signed in on this phone for 30 days.",
+    "notConfigured": "There are no technicians yet. On the PC running the app, add the first one with this command and use the username and PIN it prints:",
+    "errors": {
+      "invalid": "Wrong username or PIN.",
+      "locked": "Too many tries. Wait 15 minutes or ask for a new PIN.",
+      "failed": "Couldn't connect. Check your signal and try again."
+    }
+  },
+  "auth": {
+    "signOut": "Sign out {name}"
+  },
+  "servicetitan": {
+    "jobLabel": "Job number",
+    "jobPlaceholder": "e.g. 4521",
+    "jobHint": "Look up the job to see the equipment ServiceTitan already has at that house.",
+    "demo": "DEMO",
+    "demoHint": "Demo mode: try job 75907463. Nothing is sent to the real ServiceTitan.",
+    "search": "Search",
+    "searching": "Searching…",
+    "notFound": "No job with that number. Check it and try again.",
+    "job": "Job #{number}",
+    "changeJob": "Change job",
+    "existing": "{count, plural, =0 {No equipment in ServiceTitan} one {# unit in ServiceTitan} other {# units in ServiceTitan}}",
+    "unnamed": "(no name)",
+    "sendHeading": "Send to ServiceTitan",
+    "loading": "Looking up the job in ServiceTitan…",
+    "target": "Save to",
+    "updateOption": "Update: {name} ({serial})",
+    "createOption": "Create new equipment",
+    "noChanges": "ServiceTitan already has this. Nothing to change.",
+    "markDone": "Mark as done",
+    "empty": "(empty)",
+    "confirmUpdate": "{count, plural, one {Send # change} other {Send # changes}}",
+    "confirmCreate": "Create in ServiceTitan",
+    "sending": "Sending…",
+    "sentUpdated": "Done: updated in ServiceTitan.",
+    "sentCreated": "Done: created in ServiceTitan.",
+    "marked": "Marked as done.",
+    "close": "Close",
+    "cancel": "Cancel",
+    "fields": {
+      "name": "Name",
+      "serialNumber": "Serial number",
+      "model": "Model number",
+      "manufacturer": "Manufacturer",
+      "memo": "Memo"
+    },
+    "errors": {
+      "off": "ServiceTitan isn't connected yet.",
+      "auth": "The ServiceTitan credentials don't work. Tell whoever manages the app.",
+      "forbidden": "The integration isn't allowed to do this in ServiceTitan. The app's scopes need checking.",
+      "invalid": "ServiceTitan rejected the data. Check the fields.",
+      "not-found": "Not found in ServiceTitan.",
+      "upstream": "Couldn't reach ServiceTitan. Try again.",
+      "offline": "No signal. Look up the job when you're connected."
+    }
   }
 }
